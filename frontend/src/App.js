@@ -112,7 +112,6 @@ function App() {
 
   const goToQuestion = (index) => {
     setCurrentQuestion(index);
-    setShowHint(false);
   };
 
   const handleSectionChange = (sectionId) => {
