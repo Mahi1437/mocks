@@ -198,11 +198,11 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 16px 32px;
-  background: var(--bg-tertiary);
+  padding: 18px 36px;
+  background: transparent;
   color: var(--text-primary);
-  border: 2px solid var(--border-color);
-  border-radius: 12px;
+  border: 3px solid var(--border-color);
+  border-radius: 14px;
   font-size: 1.1rem;
   font-weight: 600;
   text-decoration: none;
@@ -210,8 +210,10 @@ body {
 }
 
 .secondary-btn:hover {
-  border-color: var(--primary);
-  color: var(--primary);
+  border-color: #fbbf24;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.1);
+  transform: translateY(-2px);
 }
 
 .hero-stats {
