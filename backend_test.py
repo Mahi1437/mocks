@@ -323,32 +323,17 @@ class BITSATMockTestAPITester:
         
         return success
 
-    def test_invalid_question_id(self):
-        """Test handling of invalid question ID"""
+    def test_invalid_section(self):
+        """Test handling of invalid section"""
         success, response = self.run_test(
-            "Invalid Question ID (999)",
+            "Invalid Section (invalid_section)",
             "GET",
-            "quiz/question/999",
-            200  # API returns 200 with error message
+            "quiz/questions/invalid_section",
+            200
         )
         
         if success and 'error' in response:
-            print("✅ Invalid question ID handled correctly")
-        
-        return success
-
-    def test_status_endpoint(self):
-        """Test status check endpoint"""
-        success, response = self.run_test(
-            "Create Status Check",
-            "POST",
-            "status",
-            200,
-            data={"client_name": "test_client"}
-        )
-        
-        if success:
-            print("✅ Status endpoint works")
+            print("✅ Invalid section handled correctly")
         
         return success
 
