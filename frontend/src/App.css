@@ -97,6 +97,12 @@ body {
   filter: var(--logo-filter, none);
 }
 
+.edu9-logo {
+  height: 60px;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
 .start-content {
   flex: 1;
   display: flex;
@@ -355,8 +361,9 @@ body {
 }
 
 .logo-small {
-  height: 40px;
+  height: 45px;
   object-fit: contain;
+  border-radius: 6px;
 }
 
 .test-title {
