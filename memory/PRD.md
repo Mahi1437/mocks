@@ -1,46 +1,51 @@
-# Chemistry Quiz Application PRD
+# BITSAT Mock Test Application PRD
 
 ## Original Problem Statement
-Build an exact replica of the Gemini-shared chemistry quiz interface for embedding in user's website. Features include: 10 questions with A/B/C/D options, question images, hints, progress tracking, scoring, and navigation.
+Create a BITSAT Mock Test Application with 5 sections (Physics-30, Chemistry-30, English-10, Logical Reasoning-20, Mathematics-40), total 130 questions, +3/-1 marking scheme, 3-hour timer, BITS Pilani & Edu9 logos, section navigation, question palette, mark for review, results after submission.
 
 ## Architecture
-- **Backend**: FastAPI Python server with quiz questions data
-- **Frontend**: React application with modern dark theme UI
+- **Backend**: FastAPI Python server with quiz questions data (130 questions)
+- **Frontend**: React application with professional exam interface
 - **Database**: MongoDB (for storing quiz results)
 
-## Core Requirements (Static)
-- 10 chemistry questions (JEE-style)
-- Multiple choice options (A, B, C, D)
-- Question images (molecular structures)
-- Show/Hide hint functionality
-- Progress indicator (X/10)
-- Real-time score counter
-- Previous/Next navigation
-- Sidebar question navigation
-- Submit quiz and results screen
-- Restart quiz functionality
+## Core Requirements
+- 5 Sections: Physics(30), Chemistry(30), English(10), Logical Reasoning(20), Mathematics(40)
+- Total: 130 Questions | Maximum Marks: 390
+- Marking: +3 correct, -1 wrong, 0 unattempted
+- Duration: 3 hours (180 minutes)
+- Header: BITS Pilani logo (left), Edu9 logo (right)
+- Footer: Promotional banner for Edu9 Career Guidance
 
-## What's Been Implemented (Jan 2026)
-- [x] Backend API with 10 chemistry questions
-- [x] Question endpoints: GET /api/quiz/questions, GET /api/quiz/question/{id}
-- [x] Answer checking: POST /api/quiz/check-answer
-- [x] Quiz submission: POST /api/quiz/submit
-- [x] Results storage in MongoDB
-- [x] Frontend quiz interface with sidebar navigation
-- [x] Progress tracking and scoring
-- [x] Hint reveal functionality
-- [x] Correct/incorrect answer feedback
-- [x] Results screen with score percentage
-- [x] Restart quiz functionality
+## Features Implemented (Jan 2026)
+- [x] Start screen with test info and instructions
+- [x] 3-hour countdown timer with warning at 10 mins
+- [x] Section tabs with progress tracking
+- [x] Question display with 4 options (A, B, C, D)
+- [x] Mark for Review functionality
+- [x] Clear Response option
+- [x] Show/Hide Hint feature
+- [x] Previous/Next navigation
+- [x] Question palette with status colors (answered, not answered, marked)
+- [x] Dark/Light theme toggle
+- [x] Submit confirmation modal
+- [x] Results page with section-wise breakdown
+- [x] Promotional footer for Edu9 (9133311450, info@edu9.in)
 
 ## Testing Status
-- Backend: 89% pass rate (minor error handling improvement done)
-- Frontend: 100% all features working
+- Backend: 100% (11/11 tests passed)
+- Frontend: 100% (all features working)
 - Integration: 100% seamless
 
+## API Endpoints
+- GET /api/quiz/sections - Section configuration
+- GET /api/quiz/all-questions - All 130 questions
+- GET /api/quiz/questions/{section} - Section-specific questions
+- POST /api/quiz/submit - Submit and calculate results
+- GET /api/quiz/correct-answers - Correct answers for review
+
 ## Next Tasks / Backlog
-- P0: None - Core MVP complete
-- P1: Add more question images, expand question bank
+- P1: Add more questions to question bank
 - P2: User authentication to save progress
 - P2: Leaderboard functionality
-- P3: Timer feature for timed quizzes
+- P3: Question images support
+- P3: Detailed analysis report with weak areas
