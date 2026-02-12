@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import "@/App.css";
 import axios from "axios";
 import { 
-  ChevronLeft, ChevronRight, Lightbulb, Check, X, RotateCcw, 
+  ChevronLeft, ChevronRight, Check, X, RotateCcw, 
   Trophy, Clock, Flag, Trash2, Sun, Moon, BookOpen, Brain,
   Calculator, FlaskConical, Atom, Languages
 } from "lucide-react";
