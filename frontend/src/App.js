@@ -153,7 +153,6 @@ function App() {
     setCurrentQuestion(0);
     setSelectedAnswers({});
     setMarkedForReview({});
-    setShowHint(false);
     setQuizStarted(false);
     setQuizCompleted(false);
     setQuizResult(null);
