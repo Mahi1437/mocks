@@ -107,7 +107,6 @@ function App() {
   const handlePrevious = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
-      setShowHint(false);
     }
   };
 
