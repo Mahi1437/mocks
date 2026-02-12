@@ -170,27 +170,35 @@ class BITSATMockTestAPITester:
                 
         return success
 
-    def test_get_single_question(self):
-        """Test getting a single question by ID"""
-        success, response = self.run_test(
-            "Get Single Question (ID=1)",
-            "GET",
-            "quiz/question/1",
-            200
-        )
-        
-        if success:
-            # Validate single question structure
-            required_fields = ['id', 'question', 'options', 'hint']
-            missing_fields = [field for field in required_fields if field not in response]
+    def test_get_section_questions(self):
+        """Test getting questions for each section"""
+        for section in self.sections:
+            success, response = self.run_test(
+                f"Get {section.title()} Questions",
+                "GET",
+                f"quiz/questions/{section}",
+                200
+            )
             
-            if not missing_fields and response['id'] == 1:
-                print("✅ Single question retrieval works correctly")
-            else:
-                print(f"❌ Single question structure issue: {missing_fields}")
+            if not success:
                 return False
                 
-        return success
+            if isinstance(response, list):
+                expected_counts = {
+                    "physics": 30, "chemistry": 30, "english": 10, 
+                    "logical": 20, "mathematics": 40
+                }
+                
+                if len(response) == expected_counts[section]:
+                    print(f"✅ {section.title()}: {len(response)} questions")
+                else:
+                    print(f"❌ {section.title()}: Expected {expected_counts[section]}, got {len(response)}")
+                    return False
+            else:
+                print(f"❌ {section.title()}: Invalid response format")
+                return False
+                
+        return True
 
     def test_check_answer_correct(self):
         """Test checking a correct answer"""
