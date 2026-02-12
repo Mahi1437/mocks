@@ -311,6 +311,10 @@ body {
   color: #ef4444;
 }
 
+.option-icon.selected {
+  color: #6366f1;
+}
+
 /* Hint Section */
 .hint-section {
   margin-top: 28px;
