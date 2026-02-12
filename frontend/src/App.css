@@ -569,6 +569,110 @@ body {
   color: var(--text-muted);
 }
 
+/* Test URL Badge */
+.test-url {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.url-label {
+  color: var(--text-muted);
+}
+
+.test-url code {
+  color: var(--primary);
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+/* Not Found & Coming Soon Pages */
+.not-found-page,
+.coming-soon-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.coming-soon-content {
+  text-align: center;
+  max-width: 500px;
+}
+
+.test-logo-large {
+  height: 100px;
+  margin-bottom: 24px;
+  border-radius: 12px;
+}
+
+.coming-soon-content h1 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.coming-soon-content .institution {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 24px;
+}
+
+.coming-soon-badge-large {
+  display: inline-block;
+  padding: 12px 32px;
+  background: linear-gradient(135deg, var(--warning) 0%, #f97316 100%);
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-radius: 30px;
+  margin-bottom: 24px;
+}
+
+.coming-soon-text {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+
+.test-info-preview {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.test-info-preview .info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.test-info-preview .info-item svg {
+  color: var(--primary);
+}
+
+.not-found-page h1 {
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+}
+
+.not-found-page p {
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
 /* ==================== QUIZ START SCREEN ==================== */
 
 .loading-screen {
