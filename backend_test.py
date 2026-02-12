@@ -352,6 +352,7 @@ def main():
     test_results.append(tester.test_get_section_questions())
     test_results.append(tester.test_submit_quiz())
     test_results.append(tester.test_get_correct_answers())
+    test_results.append(tester.test_invalid_section())
     
     # Print final results
     print("\n" + "=" * 50)
