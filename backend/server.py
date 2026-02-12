@@ -19,17 +19,14 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-# Create the main app without a prefix
 app = FastAPI()
-
-# Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
 # ============== BITSAT MOCK TEST QUESTIONS ==============
 
 # SECTION 1: PHYSICS (30 Questions)
 PHYSICS_QUESTIONS = [
-    {"id": 1, "question": "Which of the following molecules has the highest dipole moment?", "options": {"A": "NH₃", "B": "NF₃", "C": "CO₂", "D": "BF₃"}, "correct_answer": "A", "hint": "Consider the electronegativity difference and molecular geometry."},
+    {"id": 1, "question": "A particle moves along a straight line such that its displacement at any time t is given by s = t³ - 6t² + 3t + 4 meters. Find the velocity when the acceleration is zero.", "options": {"A": "-9 m/s", "B": "0 m/s", "C": "-12 m/s", "D": "3 m/s"}, "correct_answer": "A", "hint": "v = ds/dt, a = dv/dt. Set a = 0 to find t, then calculate v."},
     {"id": 2, "question": "A body is projected vertically upward with velocity 40 m/s. The displacement after 5s is (g = 10 m/s²):", "options": {"A": "50 m", "B": "75 m", "C": "100 m", "D": "125 m"}, "correct_answer": "B", "hint": "Use s = ut + ½at² with proper signs."},
     {"id": 3, "question": "The dimension of Planck's constant is same as:", "options": {"A": "Energy", "B": "Linear momentum", "C": "Angular momentum", "D": "Force"}, "correct_answer": "C", "hint": "E = hν, find dimensions of h."},
     {"id": 4, "question": "Two vectors A and B have magnitudes 3 and 4 respectively. If A × B = 6k̂, then A · B equals:", "options": {"A": "6", "B": "8", "C": "10", "D": "6√3"}, "correct_answer": "D", "hint": "Use |A × B| = AB sinθ and A · B = AB cosθ."},
@@ -37,8 +34,8 @@ PHYSICS_QUESTIONS = [
     {"id": 6, "question": "The escape velocity from the surface of earth is ve. The escape velocity from a planet whose mass and radius are 3 times those of earth is:", "options": {"A": "ve", "B": "3ve", "C": "9ve", "D": "27ve"}, "correct_answer": "A", "hint": "ve = √(2GM/R), substitute 3M and 3R."},
     {"id": 7, "question": "A spring of force constant k is cut into two equal parts. The force constant of each part is:", "options": {"A": "k", "B": "2k", "C": "k/2", "D": "4k"}, "correct_answer": "B", "hint": "Force constant is inversely proportional to length."},
     {"id": 8, "question": "The moment of inertia of a uniform circular disc about its diameter is I. Its moment of inertia about an axis perpendicular to its plane and passing through center is:", "options": {"A": "I", "B": "2I", "C": "I/2", "D": "4I"}, "correct_answer": "B", "hint": "Use perpendicular axis theorem."},
-    {"id": 9, "question": "Two identical balls A and B are moving with velocities +0.5 m/s and -0.3 m/s respectively. If they collide head on elastically, then their velocities after collision are:", "options": {"A": "+0.5 m/s and -0.3 m/s", "B": "-0.3 m/s and +0.5 m/s", "C": "+0.3 m/s and -0.5 m/s", "D": "-0.5 m/s and +0.3 m/s"}, "correct_answer": "B", "hint": "In elastic collision of identical masses, velocities get exchanged."},
-    {"id": 10, "question": "A carnot engine working between 300K and 600K has work output 800J per cycle. What is the heat absorbed from the source?", "options": {"A": "800 J", "B": "1200 J", "C": "1600 J", "D": "2400 J"}, "correct_answer": "C", "hint": "Efficiency η = 1 - T₂/T₁ = W/Q₁."},
+    {"id": 9, "question": "Two identical balls A and B are moving with velocities +0.5 m/s and -0.3 m/s respectively. If they collide head on elastically, their velocities after collision are:", "options": {"A": "+0.5 m/s and -0.3 m/s", "B": "-0.3 m/s and +0.5 m/s", "C": "+0.3 m/s and -0.5 m/s", "D": "-0.5 m/s and +0.3 m/s"}, "correct_answer": "B", "hint": "In elastic collision of identical masses, velocities get exchanged."},
+    {"id": 10, "question": "A Carnot engine working between 300K and 600K has work output 800J per cycle. The heat absorbed from the source is:", "options": {"A": "800 J", "B": "1200 J", "C": "1600 J", "D": "2400 J"}, "correct_answer": "C", "hint": "Efficiency η = 1 - T₂/T₁ = W/Q₁."},
     {"id": 11, "question": "The pressure of a gas is increased by 50% at constant temperature. The decrease in volume will be:", "options": {"A": "50%", "B": "33.33%", "C": "40%", "D": "66.67%"}, "correct_answer": "B", "hint": "Use Boyle's law: P₁V₁ = P₂V₂."},
     {"id": 12, "question": "Two point charges +q and -q are placed at distance d apart. The electric field at the midpoint is:", "options": {"A": "Zero", "B": "kq/d² towards -q", "C": "2kq/d² towards +q", "D": "8kq/d² towards -q"}, "correct_answer": "D", "hint": "Fields due to both charges add up at midpoint."},
     {"id": 13, "question": "The equivalent capacitance of two capacitors of 6μF and 3μF connected in series is:", "options": {"A": "9 μF", "B": "3 μF", "C": "2 μF", "D": "18 μF"}, "correct_answer": "C", "hint": "1/Ceq = 1/C₁ + 1/C₂ for series combination."},
@@ -50,7 +47,7 @@ PHYSICS_QUESTIONS = [
     {"id": 19, "question": "The work function of a metal is 4.2 eV. The threshold wavelength is:", "options": {"A": "2950 Å", "B": "3100 Å", "C": "4200 Å", "D": "6200 Å"}, "correct_answer": "A", "hint": "Use E = hc/λ, with hc = 12400 eV·Å."},
     {"id": 20, "question": "In Bohr's model of hydrogen atom, the ratio of kinetic energy to total energy of electron in nth orbit is:", "options": {"A": "1", "B": "-1", "C": "2", "D": "-2"}, "correct_answer": "B", "hint": "KE = -E (total), PE = 2E."},
     {"id": 21, "question": "The half-life of a radioactive substance is 20 days. The time taken for 7/8 of the substance to decay is:", "options": {"A": "40 days", "B": "60 days", "C": "80 days", "D": "100 days"}, "correct_answer": "B", "hint": "After n half-lives, fraction remaining = (1/2)ⁿ."},
-    {"id": 22, "question": "In a p-n junction diode, the width of depletion region is:", "options": {"A": "Independent of applied voltage", "B": "Increased under forward bias", "C": "Decreased under reverse bias", "D": "Increased under reverse bias"}, "correct_answer": "D", "hint": "Reverse bias increases the potential barrier."},
+    {"id": 22, "question": "In a p-n junction diode, the width of depletion region:", "options": {"A": "Is independent of applied voltage", "B": "Increases under forward bias", "C": "Decreases under reverse bias", "D": "Increases under reverse bias"}, "correct_answer": "D", "hint": "Reverse bias increases the potential barrier."},
     {"id": 23, "question": "The velocity of sound in air at 20°C is 340 m/s. At 40°C, it will be approximately:", "options": {"A": "350 m/s", "B": "352 m/s", "C": "355 m/s", "D": "360 m/s"}, "correct_answer": "B", "hint": "v ∝ √T (absolute temperature)."},
     {"id": 24, "question": "A simple pendulum has time period T. If its length is increased by 44%, the new time period is:", "options": {"A": "1.2T", "B": "1.44T", "C": "0.72T", "D": "2T"}, "correct_answer": "A", "hint": "T ∝ √L."},
     {"id": 25, "question": "The power of a lens is -2D. Its focal length is:", "options": {"A": "+50 cm", "B": "-50 cm", "C": "+2 cm", "D": "-2 cm"}, "correct_answer": "B", "hint": "P = 1/f (in meters)."},
@@ -63,7 +60,7 @@ PHYSICS_QUESTIONS = [
 
 # SECTION 2: CHEMISTRY (30 Questions)
 CHEMISTRY_QUESTIONS = [
-    {"id": 1, "question": "Which one of the carbocations is most stable?", "options": {"A": "CH₃⁺", "B": "(CH₃)₂CH⁺", "C": "(CH₃)₃C⁺", "D": "C₂H₅⁺"}, "correct_answer": "C", "hint": "Tertiary carbocations are most stable due to hyperconjugation and inductive effect."},
+    {"id": 1, "question": "Which of the following molecules has the highest dipole moment?", "options": {"A": "NH₃", "B": "NF₃", "C": "CO₂", "D": "BF₃"}, "correct_answer": "A", "hint": "Consider electronegativity difference and molecular geometry."},
     {"id": 2, "question": "The correct order of acidic strength is:", "options": {"A": "HClO₄ > HClO₃ > HClO₂ > HClO", "B": "HClO > HClO₂ > HClO₃ > HClO₄", "C": "HClO₂ > HClO₃ > HClO₄ > HClO", "D": "HClO₃ > HClO₄ > HClO > HClO₂"}, "correct_answer": "A", "hint": "Acidic strength increases with oxygen atoms in oxyacids."},
     {"id": 3, "question": "The hybridization of carbon in CO₂ is:", "options": {"A": "sp", "B": "sp²", "C": "sp³", "D": "sp³d"}, "correct_answer": "A", "hint": "CO₂ has linear geometry with two double bonds."},
     {"id": 4, "question": "Which compound shows optical isomerism?", "options": {"A": "2-butanol", "B": "1-propanol", "C": "2-propanol", "D": "Methanol"}, "correct_answer": "A", "hint": "Optical isomerism requires a chiral center."},
@@ -116,26 +113,26 @@ LOGICAL_REASONING_QUESTIONS = [
     {"id": 3, "question": "If APPLE is coded as ELPPA, then MANGO is coded as:", "options": {"A": "OGNAM", "B": "MANGP", "C": "OBNAM", "D": "GONMA"}, "correct_answer": "A", "hint": "The word is reversed."},
     {"id": 4, "question": "Find the odd one out: 8, 27, 64, 100, 125", "options": {"A": "8", "B": "27", "C": "100", "D": "125"}, "correct_answer": "C", "hint": "All except one are perfect cubes."},
     {"id": 5, "question": "A is B's brother. C is A's mother. D is C's father. How is B related to D?", "options": {"A": "Grandfather", "B": "Grandson", "C": "Grandmother", "D": "Son"}, "correct_answer": "B", "hint": "Draw a family tree."},
-    {"id": 6, "question": "If 5 + 3 = 28, 9 + 1 = 810, then 2 + 6 = ?", "options": {"A": "__(4)__8", "B": "__(2)__6", "C": "__(4)__6", "D": "48"}, "correct_answer": "A", "hint": "Pattern: (difference)(sum)."},
+    {"id": 6, "question": "If 5 + 3 = 28, 9 + 1 = 810, then 2 + 6 = ?", "options": {"A": "48", "B": "26", "C": "46", "D": "28"}, "correct_answer": "A", "hint": "Pattern: (difference)(sum) or similar."},
     {"id": 7, "question": "Complete the series: AZ, BY, CX, DW, ?", "options": {"A": "EU", "B": "EV", "C": "FV", "D": "EX"}, "correct_answer": "B", "hint": "First letter increases, second decreases."},
     {"id": 8, "question": "Find the missing number: 3, 9, 27, 81, ?", "options": {"A": "162", "B": "243", "C": "324", "D": "729"}, "correct_answer": "B", "hint": "Each term is multiplied by 3."},
     {"id": 9, "question": "If CAT = 24, DOG = 26, then BAT = ?", "options": {"A": "22", "B": "23", "C": "24", "D": "25"}, "correct_answer": "B", "hint": "Sum of letter positions: C=3, A=1, T=20."},
-    {"id": 10, "question": "Choose the mirror image of DELHI:", "options": {"A": "IHLƎD", "B": "IHLED", "C": "DƎLHI", "D": "IHLƎD"}, "correct_answer": "A", "hint": "In mirror image, letters are reversed and flipped."},
-    {"id": 11, "question": "Find the next: 1, 1, 2, 3, 5, 8, 13, ?", "options": {"A": "18", "B": "20", "C": "21", "D": "26"}, "correct_answer": "C", "hint": "Fibonacci sequence: each term = sum of previous two."},
-    {"id": 12, "question": "If Monday = 1, Tuesday = 2... then Friday + Saturday = ?", "options": {"A": "10", "B": "11", "C": "12", "D": "13"}, "correct_answer": "B", "hint": "Friday = 5, Saturday = 6."},
-    {"id": 13, "question": "Complete: 2, 5, 10, 17, 26, ?", "options": {"A": "35", "B": "37", "C": "39", "D": "41"}, "correct_answer": "B", "hint": "Differences are 3, 5, 7, 9, 11..."},
-    {"id": 14, "question": "CHAIR is to SIT as BED is to:", "options": {"A": "Stand", "B": "Sleep", "C": "Room", "D": "Furniture"}, "correct_answer": "B", "hint": "Function relationship."},
-    {"id": 15, "question": "If ROAD = 51 and PATH = 50, then LANE = ?", "options": {"A": "30", "B": "32", "C": "36", "D": "40"}, "correct_answer": "C", "hint": "Sum of positions: L=12, A=1, N=14, E=5."},
-    {"id": 16, "question": "Pointing to a man, a woman said 'His mother is the only daughter of my mother.' How is the woman related to the man?", "options": {"A": "Mother", "B": "Daughter", "C": "Sister", "D": "Grandmother"}, "correct_answer": "A", "hint": "Only daughter of my mother = myself."},
-    {"id": 17, "question": "Find the odd one: January, March, May, June, July", "options": {"A": "January", "B": "March", "C": "June", "D": "July"}, "correct_answer": "C", "hint": "All except one have 31 days."},
-    {"id": 18, "question": "Complete: Z, X, V, T, R, ?", "options": {"A": "O", "B": "P", "C": "Q", "D": "N"}, "correct_answer": "B", "hint": "Alternate letters going backwards."},
-    {"id": 19, "question": "If 'COMPUTER' is written as 'RFUVQNPC', then 'MEDICINE' is written as:", "options": {"A": "MFEJDJOF", "B": "ENICIDME", "C": "FNDJDJOF", "D": "GFEJEJPG"}, "correct_answer": "A", "hint": "Each letter is replaced by next letter and reversed."},
-    {"id": 20, "question": "What comes next: 1, 4, 9, 16, 25, ?", "options": {"A": "30", "B": "35", "C": "36", "D": "49"}, "correct_answer": "C", "hint": "Perfect squares: 1², 2², 3², 4², 5², 6²."}
+    {"id": 10, "question": "Find the next: 1, 1, 2, 3, 5, 8, 13, ?", "options": {"A": "18", "B": "20", "C": "21", "D": "26"}, "correct_answer": "C", "hint": "Fibonacci sequence: each term = sum of previous two."},
+    {"id": 11, "question": "If Monday = 1, Tuesday = 2... then Friday + Saturday = ?", "options": {"A": "10", "B": "11", "C": "12", "D": "13"}, "correct_answer": "B", "hint": "Friday = 5, Saturday = 6."},
+    {"id": 12, "question": "Complete: 2, 5, 10, 17, 26, ?", "options": {"A": "35", "B": "37", "C": "39", "D": "41"}, "correct_answer": "B", "hint": "Differences are 3, 5, 7, 9, 11..."},
+    {"id": 13, "question": "CHAIR is to SIT as BED is to:", "options": {"A": "Stand", "B": "Sleep", "C": "Room", "D": "Furniture"}, "correct_answer": "B", "hint": "Function relationship."},
+    {"id": 14, "question": "If ROAD = 51 and PATH = 50, then LANE = ?", "options": {"A": "30", "B": "32", "C": "36", "D": "40"}, "correct_answer": "C", "hint": "Sum of positions: L=12, A=1, N=14, E=5."},
+    {"id": 15, "question": "Pointing to a man, a woman said 'His mother is the only daughter of my mother.' How is the woman related to the man?", "options": {"A": "Mother", "B": "Daughter", "C": "Sister", "D": "Grandmother"}, "correct_answer": "A", "hint": "Only daughter of my mother = myself."},
+    {"id": 16, "question": "Find the odd one: January, March, May, June, July", "options": {"A": "January", "B": "March", "C": "June", "D": "July"}, "correct_answer": "C", "hint": "All except one have 31 days."},
+    {"id": 17, "question": "Complete: Z, X, V, T, R, ?", "options": {"A": "O", "B": "P", "C": "Q", "D": "N"}, "correct_answer": "B", "hint": "Alternate letters going backwards."},
+    {"id": 18, "question": "What comes next: 1, 4, 9, 16, 25, ?", "options": {"A": "30", "B": "35", "C": "36", "D": "49"}, "correct_answer": "C", "hint": "Perfect squares: 1², 2², 3², 4², 5², 6²."},
+    {"id": 19, "question": "If in a certain code, PALE is coded as 2134, LEAP is coded as:", "options": {"A": "4312", "B": "3214", "C": "3142", "D": "4321"}, "correct_answer": "C", "hint": "P=2, A=1, L=3, E=4."},
+    {"id": 20, "question": "A clock shows 3:15. What is the angle between the hour and minute hands?", "options": {"A": "0°", "B": "7.5°", "C": "15°", "D": "22.5°"}, "correct_answer": "B", "hint": "Hour hand moves 0.5° per minute from the hour mark."}
 ]
 
-# SECTION 4: MATHEMATICS (30 Questions)
+# SECTION 4: MATHEMATICS (40 Questions)
 MATHEMATICS_QUESTIONS = [
-    {"id": 1, "question": "A particle moves along a straight line such that s = t³ - 6t² + 3t + 4 meters. Find velocity when acceleration is zero.", "options": {"A": "-9 m/s", "B": "0 m/s", "C": "-12 m/s", "D": "3 m/s"}, "correct_answer": "A", "hint": "v = ds/dt, a = dv/dt. Set a = 0 to find t."},
+    {"id": 1, "question": "If ω is an imaginary cube root of unity, what is the value of (1+ω−ω²)⁷?", "options": {"A": "−128ω", "B": "128ω²", "C": "−128ω²", "D": "128ω"}, "correct_answer": "C", "hint": "Use properties of cube roots of unity: 1+ω+ω²=0."},
     {"id": 2, "question": "The value of lim(x→0) (sin x)/x is:", "options": {"A": "0", "B": "1", "C": "∞", "D": "Does not exist"}, "correct_answer": "B", "hint": "Standard limit."},
     {"id": 3, "question": "The derivative of e^(sin x) is:", "options": {"A": "e^(sin x)", "B": "cos x · e^(sin x)", "C": "sin x · e^(cos x)", "D": "e^(cos x)"}, "correct_answer": "B", "hint": "Use chain rule."},
     {"id": 4, "question": "∫ 1/(1+x²) dx equals:", "options": {"A": "tan⁻¹x + C", "B": "sin⁻¹x + C", "C": "log(1+x²) + C", "D": "sec⁻¹x + C"}, "correct_answer": "A", "hint": "Standard integral formula."},
@@ -158,13 +155,23 @@ MATHEMATICS_QUESTIONS = [
     {"id": 21, "question": "The vector a = 3î + 4ĵ has magnitude:", "options": {"A": "3", "B": "4", "C": "5", "D": "7"}, "correct_answer": "C", "hint": "|a| = √(3² + 4²)."},
     {"id": 22, "question": "The angle between vectors î and ĵ is:", "options": {"A": "0°", "B": "45°", "C": "90°", "D": "180°"}, "correct_answer": "C", "hint": "Unit vectors along axes are perpendicular."},
     {"id": 23, "question": "The eccentricity of a circle is:", "options": {"A": "0", "B": "1", "C": "Greater than 1", "D": "Less than 1"}, "correct_answer": "A", "hint": "Circle is a special case of ellipse."},
-    {"id": 24, "question": "d/dx (log x) equals:", "options": {"A": "1/x", "B": "x", "C": "log x", "D": "e^x"}, "correct_answer": "A", "hint": "Standard derivative formula."},
-    {"id": 25, "question": "∫ e^x dx equals:", "options": {"A": "e^x", "B": "e^x + C", "C": "xe^x + C", "D": "e^x/x + C"}, "correct_answer": "B", "hint": "Integral of e^x is e^x."},
+    {"id": 24, "question": "d/dx (log x) equals:", "options": {"A": "1/x", "B": "x", "C": "log x", "D": "eˣ"}, "correct_answer": "A", "hint": "Standard derivative formula."},
+    {"id": 25, "question": "∫ eˣ dx equals:", "options": {"A": "eˣ", "B": "eˣ + C", "C": "xeˣ + C", "D": "eˣ/x + C"}, "correct_answer": "B", "hint": "Integral of eˣ is eˣ."},
     {"id": 26, "question": "The number of permutations of 4 objects taken 2 at a time is:", "options": {"A": "6", "B": "8", "C": "12", "D": "24"}, "correct_answer": "C", "hint": "P(4,2) = 4!/(4-2)!."},
     {"id": 27, "question": "If f(x) = x³, then f'(2) = ?", "options": {"A": "6", "B": "8", "C": "12", "D": "24"}, "correct_answer": "C", "hint": "f'(x) = 3x², substitute x = 2."},
-    {"id": 28, "question": "The distance between points (1,2) and (4,6) is:", "options": {"A": "3", "B": "4", "C": "5", "D": "7"}, "correct_answer": "C", "hint": "Use distance formula √[(x₂-x₁)² + (y₂-y₁)²]."},
+    {"id": 28, "question": "The distance between points (1,2) and (4,6) is:", "options": {"A": "3", "B": "4", "C": "5", "D": "7"}, "correct_answer": "C", "hint": "Use distance formula."},
     {"id": 29, "question": "The value of tan 45° is:", "options": {"A": "0", "B": "1", "C": "√3", "D": "1/√3"}, "correct_answer": "B", "hint": "tan 45° = sin 45°/cos 45°."},
-    {"id": 30, "question": "The solution of differential equation dy/dx = y is:", "options": {"A": "y = Ce^x", "B": "y = Cx", "C": "y = Ce^(-x)", "D": "y = C/x"}, "correct_answer": "A", "hint": "Separate variables and integrate."}
+    {"id": 30, "question": "The solution of dy/dx = y is:", "options": {"A": "y = Ceˣ", "B": "y = Cx", "C": "y = Ce⁻ˣ", "D": "y = C/x"}, "correct_answer": "A", "hint": "Separate variables and integrate."},
+    {"id": 31, "question": "If the roots of x² + px + q = 0 are equal, then:", "options": {"A": "p² = 4q", "B": "p² = q", "C": "p = 4q²", "D": "p = q²"}, "correct_answer": "A", "hint": "For equal roots, discriminant = 0."},
+    {"id": 32, "question": "The value of sin 30° + cos 60° is:", "options": {"A": "0", "B": "1", "C": "1/2", "D": "√3/2"}, "correct_answer": "B", "hint": "sin 30° = cos 60° = 1/2."},
+    {"id": 33, "question": "If A and B are mutually exclusive events, then P(A∩B) = ?", "options": {"A": "P(A) + P(B)", "B": "P(A) × P(B)", "C": "0", "D": "1"}, "correct_answer": "C", "hint": "Mutually exclusive means no common outcomes."},
+    {"id": 34, "question": "The inverse of matrix [1 0; 0 1] is:", "options": {"A": "[1 0; 0 1]", "B": "[0 1; 1 0]", "C": "[-1 0; 0 -1]", "D": "Does not exist"}, "correct_answer": "A", "hint": "Identity matrix is its own inverse."},
+    {"id": 35, "question": "lim(x→∞) (1 + 1/x)ˣ equals:", "options": {"A": "0", "B": "1", "C": "e", "D": "∞"}, "correct_answer": "C", "hint": "Definition of e."},
+    {"id": 36, "question": "The equation of a line passing through origin with slope 2 is:", "options": {"A": "y = 2x", "B": "y = x + 2", "C": "y = 2x + 1", "D": "2y = x"}, "correct_answer": "A", "hint": "y = mx + c, where c = 0 for origin."},
+    {"id": 37, "question": "The value of ∫₀¹ x² dx is:", "options": {"A": "1/2", "B": "1/3", "C": "1/4", "D": "1"}, "correct_answer": "B", "hint": "∫x² dx = x³/3."},
+    {"id": 38, "question": "If sin θ = 3/5, then cos θ = ?", "options": {"A": "3/5", "B": "4/5", "C": "5/4", "D": "5/3"}, "correct_answer": "B", "hint": "Use sin²θ + cos²θ = 1."},
+    {"id": 39, "question": "The number of diagonals in a hexagon is:", "options": {"A": "6", "B": "9", "C": "12", "D": "15"}, "correct_answer": "B", "hint": "n(n-3)/2 for n-sided polygon."},
+    {"id": 40, "question": "The sum of an infinite GP with first term 1 and common ratio 1/2 is:", "options": {"A": "1", "B": "2", "C": "3", "D": "∞"}, "correct_answer": "B", "hint": "S = a/(1-r) for |r| < 1."}
 ]
 
 # Define Models
@@ -193,38 +200,36 @@ class QuizResult(BaseModel):
     total_marks: float
     max_marks: float
     percentage: float
-    time_taken: int  # in seconds
+    time_taken: int
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class SubmitQuizRequest(BaseModel):
     answers: List[QuizAnswer]
-    time_taken: int  # in seconds
+    time_taken: int
 
 
 # Routes
 @api_router.get("/")
 async def root():
-    return {"message": "BITSAT Mock Test API"}
+    return {"message": "BITSAT Mock Test API - Edu9 Career Guidance"}
 
 @api_router.get("/quiz/sections")
 async def get_sections():
-    """Get all section information"""
     return {
         "sections": [
             {"id": "physics", "name": "Physics", "questions": 30, "marks_per_question": 3, "negative_marking": -1},
             {"id": "chemistry", "name": "Chemistry", "questions": 30, "marks_per_question": 3, "negative_marking": -1},
             {"id": "english", "name": "English Proficiency", "questions": 10, "marks_per_question": 3, "negative_marking": -1},
             {"id": "logical", "name": "Logical Reasoning", "questions": 20, "marks_per_question": 3, "negative_marking": -1},
-            {"id": "mathematics", "name": "Mathematics", "questions": 30, "marks_per_question": 3, "negative_marking": -1}
+            {"id": "mathematics", "name": "Mathematics", "questions": 40, "marks_per_question": 3, "negative_marking": -1}
         ],
-        "total_questions": 120,
-        "max_marks": 360,
+        "total_questions": 130,
+        "max_marks": 390,
         "duration_minutes": 180
     }
 
 @api_router.get("/quiz/questions/{section}")
 async def get_section_questions(section: str):
-    """Get questions for a specific section"""
     questions_map = {
         "physics": PHYSICS_QUESTIONS,
         "chemistry": CHEMISTRY_QUESTIONS,
@@ -237,16 +242,10 @@ async def get_section_questions(section: str):
         return {"error": "Section not found"}
     
     questions = questions_map[section]
-    return [QuizQuestion(
-        id=q["id"],
-        question=q["question"],
-        options=q["options"],
-        hint=q["hint"]
-    ) for q in questions]
+    return [QuizQuestion(id=q["id"], question=q["question"], options=q["options"], hint=q["hint"]) for q in questions]
 
 @api_router.get("/quiz/all-questions")
 async def get_all_questions():
-    """Get all questions organized by section"""
     return {
         "physics": [QuizQuestion(id=q["id"], question=q["question"], options=q["options"], hint=q["hint"]) for q in PHYSICS_QUESTIONS],
         "chemistry": [QuizQuestion(id=q["id"], question=q["question"], options=q["options"], hint=q["hint"]) for q in CHEMISTRY_QUESTIONS],
@@ -257,8 +256,6 @@ async def get_all_questions():
 
 @api_router.post("/quiz/submit")
 async def submit_quiz(request: SubmitQuizRequest):
-    """Submit quiz and calculate results"""
-    
     questions_map = {
         "physics": PHYSICS_QUESTIONS,
         "chemistry": CHEMISTRY_QUESTIONS,
@@ -291,7 +288,7 @@ async def submit_quiz(request: SubmitQuizRequest):
         
         section_name = {
             "physics": "Physics",
-            "chemistry": "Chemistry",
+            "chemistry": "Chemistry", 
             "english": "English Proficiency",
             "logical": "Logical Reasoning",
             "mathematics": "Mathematics"
@@ -306,7 +303,7 @@ async def submit_quiz(request: SubmitQuizRequest):
             marks=section_marks
         ))
     
-    max_marks = 360
+    max_marks = 390
     percentage = (total_marks / max_marks) * 100 if max_marks > 0 else 0
     
     result = QuizResult(
@@ -317,7 +314,6 @@ async def submit_quiz(request: SubmitQuizRequest):
         time_taken=request.time_taken
     )
     
-    # Save to database
     result_dict = result.model_dump()
     result_dict['timestamp'] = result_dict['timestamp'].isoformat()
     await db.bitsat_results.insert_one(result_dict)
@@ -326,7 +322,6 @@ async def submit_quiz(request: SubmitQuizRequest):
 
 @api_router.get("/quiz/correct-answers")
 async def get_correct_answers():
-    """Get all correct answers (for result display)"""
     return {
         "physics": {q["id"]: q["correct_answer"] for q in PHYSICS_QUESTIONS},
         "chemistry": {q["id"]: q["correct_answer"] for q in CHEMISTRY_QUESTIONS},
@@ -335,8 +330,6 @@ async def get_correct_answers():
         "mathematics": {q["id"]: q["correct_answer"] for q in MATHEMATICS_QUESTIONS}
     }
 
-
-# Include the router in the main app
 app.include_router(api_router)
 
 app.add_middleware(
@@ -347,11 +340,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 @app.on_event("shutdown")
