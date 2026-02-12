@@ -391,7 +391,7 @@ function App() {
           <button className="theme-toggle" onClick={() => setDarkMode(!darkMode)} data-testid="theme-toggle">
             {darkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
-          <img src="https://edu9.in/wp-content/uploads/2023/06/edu9-logo.png" alt="Edu9" className="logo-small" onError={(e) => { e.target.style.display = 'none'; }} />
+          <img src="https://customer-assets.emergentagent.com/job_gemini-link-1/artifacts/mvpyai8y_channels4_profile.jpg" alt="Edu9" className="logo-small" />
         </div>
       </header>
 
