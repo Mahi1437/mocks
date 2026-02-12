@@ -389,23 +389,20 @@ class BITSATMockTestAPITester:
         return success
 
 def main():
-    print("🧪 Starting Chemistry Quiz API Tests")
+    print("🧪 Starting BITSAT Mock Test API Tests")
     print("=" * 50)
     
-    tester = ChemistryQuizAPITester()
+    tester = BITSATMockTestAPITester()
     
     # Run all tests
     test_results = []
     
     test_results.append(tester.test_root_endpoint())
+    test_results.append(tester.test_get_sections())
     test_results.append(tester.test_get_all_questions())
-    test_results.append(tester.test_get_single_question())
-    test_results.append(tester.test_check_answer_correct())
-    test_results.append(tester.test_check_answer_incorrect())
+    test_results.append(tester.test_get_section_questions())
     test_results.append(tester.test_submit_quiz())
-    test_results.append(tester.test_get_quiz_results())
-    test_results.append(tester.test_invalid_question_id())
-    test_results.append(tester.test_status_endpoint())
+    test_results.append(tester.test_get_correct_answers())
     
     # Print final results
     print("\n" + "=" * 50)
