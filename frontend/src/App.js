@@ -305,45 +305,71 @@ function App() {
           </div>
 
           <div className="results-content">
-            <div className="score-summary">
-              <div className="score-circle large">
-                <span className="score-value" data-testid="total-marks">{quizResult.total_marks}</span>
-                <span className="score-max">/ {quizResult.max_marks}</span>
+            {/* Score Overview Card */}
+            <div className="score-overview-card">
+              <div className="score-main">
+                <div className="score-circle-container">
+                  <div className="score-circle large">
+                    <span className="score-value" data-testid="total-marks">{quizResult.total_marks}</span>
+                    <span className="score-max">/ {quizResult.max_marks}</span>
+                  </div>
+                  <p className="percentage" data-testid="percentage">{quizResult.percentage.toFixed(2)}%</p>
+                </div>
+                <div className="score-details">
+                  <div className="detail-row">
+                    <span className="detail-label">Total Questions</span>
+                    <span className="detail-value">130</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">Attempted</span>
+                    <span className="detail-value">{quizResult.sections.reduce((sum, s) => sum + s.attempted, 0)}</span>
+                  </div>
+                  <div className="detail-row correct">
+                    <span className="detail-label">Correct Answers</span>
+                    <span className="detail-value">{quizResult.sections.reduce((sum, s) => sum + s.correct, 0)}</span>
+                  </div>
+                  <div className="detail-row wrong">
+                    <span className="detail-label">Wrong Answers</span>
+                    <span className="detail-value">{quizResult.sections.reduce((sum, s) => sum + s.wrong, 0)}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">Time Taken</span>
+                    <span className="detail-value">{formatTime(quizResult.time_taken)}</span>
+                  </div>
+                </div>
               </div>
-              <p className="percentage" data-testid="percentage">{quizResult.percentage.toFixed(2)}%</p>
-              <p className="time-taken">Time Taken: {formatTime(quizResult.time_taken)}</p>
             </div>
 
-            <div className="section-results">
+            {/* Section-wise Performance Table */}
+            <div className="section-table-container">
               <h3>Section-wise Performance</h3>
-              <div className="section-cards">
+              <div className="section-table">
+                <div className="table-header">
+                  <div className="table-cell">Section</div>
+                  <div className="table-cell">Questions</div>
+                  <div className="table-cell">Attempted</div>
+                  <div className="table-cell">Correct</div>
+                  <div className="table-cell">Wrong</div>
+                  <div className="table-cell">Marks</div>
+                </div>
                 {quizResult.sections.map((section, index) => (
-                  <div key={index} className="section-result-card">
-                    <h4>{section.section_name}</h4>
-                    <div className="section-stats">
-                      <div className="stat">
-                        <span className="stat-label">Questions</span>
-                        <span className="stat-value">{section.total_questions}</span>
-                      </div>
-                      <div className="stat">
-                        <span className="stat-label">Attempted</span>
-                        <span className="stat-value">{section.attempted}</span>
-                      </div>
-                      <div className="stat correct">
-                        <span className="stat-label">Correct</span>
-                        <span className="stat-value">{section.correct}</span>
-                      </div>
-                      <div className="stat wrong">
-                        <span className="stat-label">Wrong</span>
-                        <span className="stat-value">{section.wrong}</span>
-                      </div>
-                      <div className="stat marks">
-                        <span className="stat-label">Marks</span>
-                        <span className="stat-value">{section.marks}</span>
-                      </div>
-                    </div>
+                  <div key={index} className="table-row">
+                    <div className="table-cell section-name">{section.section_name}</div>
+                    <div className="table-cell">{section.total_questions}</div>
+                    <div className="table-cell">{section.attempted}</div>
+                    <div className="table-cell correct">{section.correct}</div>
+                    <div className="table-cell wrong">{section.wrong}</div>
+                    <div className="table-cell marks">{section.marks}</div>
                   </div>
                 ))}
+                <div className="table-row total-row">
+                  <div className="table-cell section-name">Total</div>
+                  <div className="table-cell">130</div>
+                  <div className="table-cell">{quizResult.sections.reduce((sum, s) => sum + s.attempted, 0)}</div>
+                  <div className="table-cell correct">{quizResult.sections.reduce((sum, s) => sum + s.correct, 0)}</div>
+                  <div className="table-cell wrong">{quizResult.sections.reduce((sum, s) => sum + s.wrong, 0)}</div>
+                  <div className="table-cell marks">{quizResult.total_marks}</div>
+                </div>
               </div>
             </div>
 
