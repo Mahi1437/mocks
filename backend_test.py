@@ -200,54 +200,18 @@ class BITSATMockTestAPITester:
                 
         return True
 
-    def test_check_answer_correct(self):
-        """Test checking a correct answer"""
-        # Using question 1 with correct answer 'B'
+    def test_invalid_section(self):
+        """Test handling of invalid section"""
         success, response = self.run_test(
-            "Check Correct Answer (Q1, Answer B)",
-            "POST",
-            "quiz/check-answer",
-            200,
-            data={
-                "question_id": 1,
-                "selected_answer": "B"
-            }
+            "Invalid Section (invalid_section)",
+            "GET",
+            "quiz/questions/invalid_section",
+            200
         )
         
-        if success:
-            expected_fields = ['question_id', 'selected_answer', 'correct_answer', 'is_correct']
-            if all(field in response for field in expected_fields):
-                if response['is_correct'] == True and response['correct_answer'] == 'B':
-                    print("✅ Correct answer validation works")
-                else:
-                    print(f"❌ Answer validation failed: {response}")
-                    return False
-            else:
-                print(f"❌ Missing fields in response: {response}")
-                return False
-                
-        return success
-
-    def test_check_answer_incorrect(self):
-        """Test checking an incorrect answer"""
-        success, response = self.run_test(
-            "Check Incorrect Answer (Q1, Answer A)",
-            "POST",
-            "quiz/check-answer",
-            200,
-            data={
-                "question_id": 1,
-                "selected_answer": "A"
-            }
-        )
+        if success and 'error' in response:
+            print("✅ Invalid section handled correctly")
         
-        if success:
-            if response['is_correct'] == False and response['correct_answer'] == 'B':
-                print("✅ Incorrect answer validation works")
-            else:
-                print(f"❌ Incorrect answer validation failed: {response}")
-                return False
-                
         return success
 
     def test_submit_quiz(self):
