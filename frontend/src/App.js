@@ -486,23 +486,6 @@ function App() {
                 </button>
               ))}
             </div>
-
-            <div className="hint-section">
-              <button 
-                className="hint-btn" 
-                onClick={() => setShowHint(!showHint)}
-                data-testid="hint-btn"
-              >
-                <Lightbulb size={18} />
-                {showHint ? 'Hide Hint' : 'Show Hint'}
-              </button>
-              {showHint && (
-                <div className="hint-content" data-testid="hint-content">
-                  <Lightbulb size={16} />
-                  <p>{question?.hint}</p>
-                </div>
-              )}
-            </div>
           </div>
 
           <div className="navigation-buttons">
