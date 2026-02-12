@@ -245,10 +245,6 @@ function HomePage({ darkMode, setDarkMode }) {
                     <span>{test.duration}</span>
                   </div>
                 </div>
-                <div className="test-url">
-                  <span className="url-label">URL:</span>
-                  <code>/{test.id}</code>
-                </div>
                 <button 
                   className="take-test-btn" 
                   onClick={() => test.available ? navigate(`/${test.id}`) : alert('Coming Soon!')}
