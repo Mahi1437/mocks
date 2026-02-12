@@ -3,13 +3,14 @@ import sys
 import json
 from datetime import datetime
 
-class ChemistryQuizAPITester:
+class BITSATMockTestAPITester:
     def __init__(self, base_url="https://gemini-link-1.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.tests_run = 0
         self.tests_passed = 0
-        self.questions = []
+        self.all_questions = {}
+        self.sections = ["physics", "chemistry", "english", "logical", "mathematics"]
 
     def run_test(self, name, method, endpoint, expected_status, data=None, headers=None):
         """Run a single API test"""
