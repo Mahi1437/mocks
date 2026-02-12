@@ -238,8 +238,13 @@ body {
 }
 
 .start-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(37, 99, 235, 0.4);
+  background: linear-gradient(135deg, var(--primary-hover) 0%, #7c3aed 100%);
+}
+
+.start-btn:active {
+  transform: translateY(-1px) scale(0.98);
 }
 
 /* Promo Banner */
@@ -317,15 +322,22 @@ body {
 .theme-toggle {
   padding: 10px;
   background: var(--bg-tertiary);
-  border: none;
+  border: 2px solid transparent;
   border-radius: 10px;
   color: var(--text-primary);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .theme-toggle:hover {
   background: var(--border-color);
+  border-color: var(--primary);
+  transform: rotate(15deg) scale(1.1);
+  color: var(--primary);
+}
+
+.theme-toggle:active {
+  transform: rotate(0deg) scale(0.95);
 }
 
 /* Section Tabs */
@@ -349,12 +361,19 @@ body {
   color: var(--text-secondary);
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   white-space: nowrap;
 }
 
 .section-tab:hover {
   background: var(--bg-tertiary);
+  transform: translateY(-2px);
+  border-color: var(--border-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.section-tab:active {
+  transform: translateY(0);
 }
 
 .section-tab.active {
@@ -419,19 +438,26 @@ body {
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  border: 1px solid var(--border-color);
+  border: 2px solid var(--border-color);
   background: var(--bg-tertiary);
   border-radius: 8px;
   color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .action-btn:hover:not(:disabled) {
   border-color: var(--primary);
   color: var(--primary);
+  background: rgba(37, 99, 235, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.action-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .action-btn:disabled {
@@ -443,6 +469,18 @@ body {
   background: rgba(139, 92, 246, 0.15);
   border-color: var(--purple);
   color: var(--purple);
+}
+
+.mark-btn.marked:hover {
+  background: rgba(139, 92, 246, 0.25);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.clear-btn:hover:not(:disabled) {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: rgba(239, 68, 68, 0.1);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
 }
 
 .question-content {
@@ -472,18 +510,31 @@ body {
   border: 2px solid var(--border-color);
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   text-align: left;
 }
 
 .option-btn:hover {
   border-color: var(--primary);
-  background: rgba(37, 99, 235, 0.05);
+  background: rgba(37, 99, 235, 0.08);
+  transform: translateX(8px);
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.15);
+}
+
+.option-btn:hover .option-key {
+  background: var(--primary);
+  color: white;
+  transform: scale(1.1);
+}
+
+.option-btn:active {
+  transform: translateX(4px);
 }
 
 .option-btn.selected {
-  background: rgba(37, 99, 235, 0.1);
+  background: rgba(37, 99, 235, 0.12);
   border-color: var(--primary);
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.2);
 }
 
 .option-key {
@@ -497,6 +548,7 @@ body {
   font-weight: 700;
   color: var(--primary);
   flex-shrink: 0;
+  transition: all 0.3s ease;
 }
 
 .option-btn.selected .option-key {
@@ -527,16 +579,32 @@ body {
   gap: 8px;
   padding: 12px 20px;
   background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  border: 2px solid rgba(245, 158, 11, 0.3);
   border-radius: 10px;
   color: var(--warning);
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .hint-btn:hover {
   background: rgba(245, 158, 11, 0.2);
+  border-color: var(--warning);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.25);
+}
+
+.hint-btn:hover svg {
+  animation: bulbGlow 0.5s ease infinite alternate;
+}
+
+@keyframes bulbGlow {
+  from { filter: drop-shadow(0 0 2px var(--warning)); }
+  to { filter: drop-shadow(0 0 8px var(--warning)); }
+}
+
+.hint-btn:active {
+  transform: translateY(0);
 }
 
 .hint-content {
@@ -581,7 +649,7 @@ body {
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .nav-btn:disabled {
@@ -592,10 +660,26 @@ body {
 .prev-btn {
   background: var(--bg-tertiary);
   color: var(--text-primary);
+  border: 2px solid var(--border-color);
 }
 
 .prev-btn:hover:not(:disabled) {
   background: var(--border-color);
+  transform: translateX(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.prev-btn:hover:not(:disabled) svg {
+  animation: arrowLeft 0.4s ease infinite;
+}
+
+@keyframes arrowLeft {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-4px); }
+}
+
+.prev-btn:active:not(:disabled) {
+  transform: translateX(-2px);
 }
 
 .next-btn {
@@ -605,6 +689,21 @@ body {
 
 .next-btn:hover:not(:disabled) {
   background: var(--primary-hover);
+  transform: translateX(4px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+}
+
+.next-btn:hover:not(:disabled) svg {
+  animation: arrowRight 0.4s ease infinite;
+}
+
+@keyframes arrowRight {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(4px); }
+}
+
+.next-btn:active:not(:disabled) {
+  transform: translateX(2px);
 }
 
 /* Question Palette */
@@ -703,7 +802,7 @@ body {
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   border: 2px solid transparent;
 }
 
@@ -713,9 +812,22 @@ body {
   color: var(--text-secondary);
 }
 
+.q-btn.not-visited:hover {
+  background: var(--bg-secondary);
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: scale(1.15) translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
 .q-btn.answered {
   background: var(--success);
   color: white;
+}
+
+.q-btn.answered:hover {
+  transform: scale(1.15) translateY(-2px);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
 }
 
 .q-btn.marked {
@@ -723,18 +835,34 @@ body {
   color: white;
 }
 
+.q-btn.marked:hover {
+  transform: scale(1.15) translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
 .q-btn.answered-marked {
   background: linear-gradient(135deg, var(--success) 50%, var(--purple) 50%);
   color: white;
 }
 
-.q-btn.current {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
+.q-btn.answered-marked:hover {
+  transform: scale(1.15) translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
 }
 
-.q-btn:hover {
-  transform: scale(1.1);
+.q-btn.current {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+  animation: currentPulse 2s ease infinite;
+}
+
+@keyframes currentPulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3); }
+  50% { box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.2); }
+}
+
+.q-btn:active {
+  transform: scale(0.95);
 }
 
 .submit-test-btn {
@@ -747,12 +875,17 @@ body {
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .submit-test-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 28px rgba(239, 68, 68, 0.4);
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+.submit-test-btn:active {
+  transform: translateY(-1px) scale(0.98);
 }
 
 /* Promo Footer */
@@ -834,17 +967,38 @@ body {
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .cancel-btn {
   background: var(--bg-tertiary);
   color: var(--text-primary);
+  border: 2px solid var(--border-color);
+}
+
+.cancel-btn:hover {
+  background: var(--border-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.cancel-btn:active {
+  transform: translateY(0);
 }
 
 .confirm-btn {
   background: var(--danger);
   color: white;
+}
+
+.confirm-btn:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+}
+
+.confirm-btn:active {
+  transform: translateY(0);
 }
 
 /* Results Screen */
@@ -993,12 +1147,26 @@ body {
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .restart-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(37, 99, 235, 0.4);
+  background: linear-gradient(135deg, var(--primary-hover) 0%, #7c3aed 100%);
+}
+
+.restart-btn:hover svg {
+  animation: rotateIcon 0.6s ease;
+}
+
+@keyframes rotateIcon {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+.restart-btn:active {
+  transform: translateY(-1px) scale(0.98);
 }
 
 /* Responsive */
