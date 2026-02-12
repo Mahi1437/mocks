@@ -213,7 +213,7 @@ async def get_quiz_questions():
         ))
     return questions
 
-@api_router.get("/quiz/question/{question_id}", response_model=QuizQuestion)
+@api_router.get("/quiz/question/{question_id}")
 async def get_single_question(question_id: int):
     """Get a single question by ID"""
     for q in QUIZ_QUESTIONS:
@@ -225,7 +225,7 @@ async def get_single_question(question_id: int):
                 options=q["options"],
                 hint=q["hint"]
             )
-    return {"error": "Question not found"}
+    return {"error": "Question not found", "question_id": question_id}
 
 @api_router.post("/quiz/check-answer")
 async def check_answer(answer: QuizAnswer):
