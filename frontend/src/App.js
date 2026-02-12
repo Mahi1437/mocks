@@ -11,8 +11,6 @@ function App() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [showHint, setShowHint] = useState(false);
-  const [score, setScore] = useState(0);
-  const [correctAnswers, setCorrectAnswers] = useState({});
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [quizResult, setQuizResult] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,31 +30,11 @@ function App() {
     }
   };
 
-  const handleAnswerSelect = async (option) => {
-    if (correctAnswers[currentQuestion + 1] !== undefined) return;
-
+  const handleAnswerSelect = (option) => {
     setSelectedAnswers({
       ...selectedAnswers,
       [currentQuestion + 1]: option
     });
-
-    try {
-      const response = await axios.post(`${API}/quiz/check-answer`, {
-        question_id: currentQuestion + 1,
-        selected_answer: option
-      });
-      
-      setCorrectAnswers({
-        ...correctAnswers,
-        [currentQuestion + 1]: response.data.correct_answer
-      });
-
-      if (response.data.is_correct) {
-        setScore(score + 1);
-      }
-    } catch (e) {
-      console.error("Error checking answer:", e);
-    }
   };
 
   const handleNext = () => {
@@ -92,8 +70,6 @@ function App() {
     setCurrentQuestion(0);
     setSelectedAnswers({});
     setShowHint(false);
-    setScore(0);
-    setCorrectAnswers({});
     setQuizCompleted(false);
     setQuizResult(null);
   };
@@ -111,6 +87,7 @@ function App() {
     );
   }
 
+  // Results Screen - Shows after quiz submission
   if (quizCompleted && quizResult) {
     return (
       <div className="quiz-container" data-testid="results-screen">
@@ -154,9 +131,7 @@ function App() {
 
   const question = questions[currentQuestion];
   const selectedAnswer = selectedAnswers[currentQuestion + 1];
-  const correctAnswer = correctAnswers[currentQuestion + 1];
-  const isAnswered = correctAnswer !== undefined;
-  const allAnswered = Object.keys(correctAnswers).length === questions.length;
+  const allAnswered = Object.keys(selectedAnswers).length === questions.length;
 
   return (
     <div className="quiz-container" data-testid="quiz-container">
@@ -167,27 +142,20 @@ function App() {
         </div>
         <div className="question-nav">
           {questions.map((q, index) => {
-            const qCorrect = correctAnswers[index + 1];
-            const qSelected = selectedAnswers[index + 1];
-            let statusClass = '';
-            if (qCorrect !== undefined) {
-              statusClass = qCorrect === qSelected ? 'answered-correct' : 'answered-incorrect';
-            } else if (qSelected) {
-              statusClass = 'selected';
-            }
+            const isAnswered = selectedAnswers[index + 1] !== undefined;
             
             return (
               <button
                 key={index}
-                className={`nav-item ${currentQuestion === index ? 'active' : ''} ${statusClass}`}
+                className={`nav-item ${currentQuestion === index ? 'active' : ''} ${isAnswered ? 'answered' : ''}`}
                 onClick={() => goToQuestion(index)}
                 data-testid={`nav-question-${index + 1}`}
               >
                 <span className="nav-number">{String(index + 1).padStart(2, '0')}.</span>
                 <span className="nav-label">Question {index + 1}</span>
-                {qCorrect !== undefined && (
-                  <span className="nav-status">
-                    {qCorrect === qSelected ? <Check size={14} /> : <X size={14} />}
+                {isAnswered && (
+                  <span className="nav-status answered">
+                    <Check size={14} />
                   </span>
                 )}
               </button>
@@ -203,9 +171,9 @@ function App() {
           <div className="progress-info">
             <span className="progress-text" data-testid="progress-indicator">{currentQuestion + 1} / {questions.length}</span>
           </div>
-          <div className="score-display-header">
-            <span className="score-label">Score:</span>
-            <span className="score-value" data-testid="current-score">{score}</span>
+          <div className="answered-count">
+            <span className="answered-label">Answered:</span>
+            <span className="answered-value" data-testid="answered-count">{Object.keys(selectedAnswers).length} / {questions.length}</span>
           </div>
         </div>
 
@@ -228,29 +196,18 @@ function App() {
           {/* Options */}
           <div className="options-container">
             {question && Object.entries(question.options).map(([key, value]) => {
-              let optionClass = 'option-btn';
-              if (isAnswered) {
-                if (key === correctAnswer) {
-                  optionClass += ' correct';
-                } else if (key === selectedAnswer && key !== correctAnswer) {
-                  optionClass += ' incorrect';
-                }
-              } else if (key === selectedAnswer) {
-                optionClass += ' selected';
-              }
+              const isSelected = key === selectedAnswer;
 
               return (
                 <button
                   key={key}
-                  className={optionClass}
+                  className={`option-btn ${isSelected ? 'selected' : ''}`}
                   onClick={() => handleAnswerSelect(key)}
-                  disabled={isAnswered}
                   data-testid={`option-${key}`}
                 >
                   <span className="option-letter">{key}.</span>
                   <span className="option-text">{value}</span>
-                  {isAnswered && key === correctAnswer && <Check className="option-icon correct" />}
-                  {isAnswered && key === selectedAnswer && key !== correctAnswer && <X className="option-icon incorrect" />}
+                  {isSelected && <Check className="option-icon selected" />}
                 </button>
               );
             })}
@@ -294,7 +251,7 @@ function App() {
               disabled={!allAnswered}
               data-testid="submit-btn"
             >
-              Submit Quiz
+              Submit Quiz ({Object.keys(selectedAnswers).length}/{questions.length})
             </button>
           ) : (
             <button 
