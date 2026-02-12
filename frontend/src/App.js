@@ -117,7 +117,6 @@ function App() {
   const handleSectionChange = (sectionId) => {
     setCurrentSection(sectionId);
     setCurrentQuestion(0);
-    setShowHint(false);
   };
 
   const handleSubmitQuiz = async () => {
