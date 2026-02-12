@@ -252,37 +252,76 @@ class BITSATMockTestAPITester:
 
     def test_submit_quiz(self):
         """Test submitting a complete quiz"""
-        # Create sample answers for all 10 questions
-        sample_answers = [
-            {"question_id": 1, "selected_answer": "B"},  # Correct
-            {"question_id": 2, "selected_answer": "A"},  # Correct
-            {"question_id": 3, "selected_answer": "A"},  # Correct
-            {"question_id": 4, "selected_answer": "A"},  # Correct
-            {"question_id": 5, "selected_answer": "A"},  # Correct
-            {"question_id": 6, "selected_answer": "B"},  # Correct
-            {"question_id": 7, "selected_answer": "B"},  # Correct
-            {"question_id": 8, "selected_answer": "B"},  # Correct
-            {"question_id": 9, "selected_answer": "A"},  # Correct
-            {"question_id": 10, "selected_answer": "C"}, # Correct
-        ]
+        # Create sample answers for all sections
+        sample_answers = []
+        
+        # Physics (30 questions) - mix of correct and incorrect
+        for i in range(1, 31):
+            sample_answers.append({
+                "question_id": i,
+                "section": "physics",
+                "selected_answer": "A" if i <= 20 else "B"  # 20 correct, 10 wrong
+            })
+        
+        # Chemistry (30 questions) - mix of correct and incorrect  
+        for i in range(1, 31):
+            sample_answers.append({
+                "question_id": i,
+                "section": "chemistry", 
+                "selected_answer": "A" if i <= 15 else "C"  # 15 correct, 15 wrong
+            })
+        
+        # English (10 questions) - mostly correct
+        for i in range(1, 11):
+            sample_answers.append({
+                "question_id": i,
+                "section": "english",
+                "selected_answer": "B" if i <= 8 else "D"  # 8 correct, 2 wrong
+            })
+        
+        # Logical Reasoning (20 questions) - half correct
+        for i in range(1, 21):
+            sample_answers.append({
+                "question_id": i,
+                "section": "logical",
+                "selected_answer": "A" if i <= 10 else "D"  # 10 correct, 10 wrong
+            })
+        
+        # Mathematics (40 questions) - mostly correct
+        for i in range(1, 41):
+            sample_answers.append({
+                "question_id": i,
+                "section": "mathematics",
+                "selected_answer": "A" if i <= 30 else "C"  # 30 correct, 10 wrong
+            })
         
         success, response = self.run_test(
-            "Submit Complete Quiz",
+            "Submit Complete BITSAT Quiz",
             "POST",
             "quiz/submit",
             200,
-            data={"answers": sample_answers}
+            data={
+                "answers": sample_answers,
+                "time_taken": 7200  # 2 hours
+            }
         )
         
         if success:
-            required_fields = ['id', 'total_questions', 'correct_answers', 'score_percentage', 'answers']
+            required_fields = ['id', 'sections', 'total_marks', 'max_marks', 'percentage', 'time_taken']
             if all(field in response for field in required_fields):
-                if (response['total_questions'] == 10 and 
-                    response['correct_answers'] == 10 and 
-                    response['score_percentage'] == 100.0):
-                    print("✅ Quiz submission works correctly (perfect score)")
+                if (response['max_marks'] == 390 and 
+                    len(response['sections']) == 5):
+                    print("✅ Quiz submission works correctly")
+                    print(f"   Total marks: {response['total_marks']}/{response['max_marks']}")
+                    print(f"   Percentage: {response['percentage']:.2f}%")
+                    print(f"   Time taken: {response['time_taken']} seconds")
+                    
+                    # Check section results
+                    for section in response['sections']:
+                        print(f"   {section['section_name']}: {section['correct']}/{section['total_questions']} correct, {section['marks']} marks")
+                        
                 else:
-                    print(f"❌ Quiz scoring issue: {response['correct_answers']}/10, {response['score_percentage']}%")
+                    print(f"❌ Quiz result structure issue: {response}")
                     return False
             else:
                 print(f"❌ Missing fields in quiz result: {response}")
