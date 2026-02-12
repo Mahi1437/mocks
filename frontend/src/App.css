@@ -107,12 +107,20 @@ body {
   color: #ef4444;
 }
 
+.nav-item.answered .nav-status {
+  color: #6366f1;
+}
+
 .nav-item.answered-correct {
   background: rgba(34, 197, 94, 0.1);
 }
 
 .nav-item.answered-incorrect {
   background: rgba(239, 68, 68, 0.1);
+}
+
+.nav-item.answered {
+  background: rgba(99, 102, 241, 0.1);
 }
 
 /* Main Content */
