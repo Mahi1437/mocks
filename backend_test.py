@@ -58,50 +58,114 @@ class BITSATMockTestAPITester:
         )
         return success
 
+    def test_get_sections(self):
+        """Test getting quiz sections"""
+        success, response = self.run_test(
+            "Get Quiz Sections",
+            "GET",
+            "quiz/sections",
+            200
+        )
+        
+        if success:
+            expected_fields = ['sections', 'total_questions', 'max_marks', 'duration_minutes']
+            if all(field in response for field in expected_fields):
+                if (response['total_questions'] == 130 and 
+                    response['max_marks'] == 390 and 
+                    response['duration_minutes'] == 180):
+                    print("✅ Quiz sections configuration is correct")
+                    
+                    # Check sections structure
+                    sections = response['sections']
+                    if len(sections) == 5:
+                        expected_sections = [
+                            {"id": "physics", "questions": 30},
+                            {"id": "chemistry", "questions": 30},
+                            {"id": "english", "questions": 10},
+                            {"id": "logical", "questions": 20},
+                            {"id": "mathematics", "questions": 40}
+                        ]
+                        
+                        for expected in expected_sections:
+                            section = next((s for s in sections if s['id'] == expected['id']), None)
+                            if section and section['questions'] == expected['questions']:
+                                print(f"✅ {expected['id'].title()} section: {expected['questions']} questions")
+                            else:
+                                print(f"❌ {expected['id'].title()} section configuration incorrect")
+                                return False
+                    else:
+                        print(f"❌ Expected 5 sections, got {len(sections)}")
+                        return False
+                else:
+                    print(f"❌ Quiz configuration incorrect: {response}")
+                    return False
+            else:
+                print(f"❌ Missing required fields in sections response")
+                return False
+                
+        return success
+
     def test_get_all_questions(self):
         """Test getting all quiz questions"""
         success, response = self.run_test(
             "Get All Quiz Questions",
             "GET",
-            "quiz/questions",
+            "quiz/all-questions",
             200
         )
         
-        if success and isinstance(response, list):
-            self.questions = response
-            print(f"   Found {len(response)} questions")
+        if success and isinstance(response, dict):
+            self.all_questions = response
+            total_questions = 0
             
-            # Validate question structure
-            if len(response) == 10:
-                print("✅ Correct number of questions (10)")
-                
-                # Check first question structure
-                first_q = response[0]
-                required_fields = ['id', 'question', 'options', 'hint']
-                missing_fields = [field for field in required_fields if field not in first_q]
-                
-                if not missing_fields:
-                    print("✅ Question structure is correct")
-                    
-                    # Check options structure
-                    if isinstance(first_q['options'], dict) and all(key in first_q['options'] for key in ['A', 'B', 'C', 'D']):
-                        print("✅ Options structure is correct (A, B, C, D)")
-                    else:
-                        print("❌ Options structure is incorrect")
-                        return False
+            # Check each section
+            expected_counts = {
+                "physics": 30,
+                "chemistry": 30,
+                "english": 10,
+                "logical": 20,
+                "mathematics": 40
+            }
+            
+            for section, expected_count in expected_counts.items():
+                if section in response:
+                    questions = response[section]
+                    if len(questions) == expected_count:
+                        print(f"✅ {section.title()}: {len(questions)} questions")
+                        total_questions += len(questions)
                         
-                    # Check if correct_answer is NOT included (security)
-                    if 'correct_answer' not in first_q:
-                        print("✅ Correct answers are properly hidden")
+                        # Check first question structure
+                        if questions:
+                            first_q = questions[0]
+                            required_fields = ['id', 'question', 'options', 'hint']
+                            missing_fields = [field for field in required_fields if field not in first_q]
+                            
+                            if not missing_fields:
+                                # Check options structure
+                                if isinstance(first_q['options'], dict) and all(key in first_q['options'] for key in ['A', 'B', 'C', 'D']):
+                                    # Check if correct_answer is NOT included (security)
+                                    if 'correct_answer' not in first_q:
+                                        continue  # All good for this section
+                                    else:
+                                        print(f"❌ Security issue in {section}: correct answers are exposed")
+                                        return False
+                                else:
+                                    print(f"❌ Options structure incorrect in {section}")
+                                    return False
+                            else:
+                                print(f"❌ Missing required fields in {section}: {missing_fields}")
+                                return False
                     else:
-                        print("❌ Security issue: correct answers are exposed")
+                        print(f"❌ {section.title()}: Expected {expected_count} questions, got {len(questions)}")
                         return False
-                        
                 else:
-                    print(f"❌ Missing required fields: {missing_fields}")
+                    print(f"❌ Missing section: {section}")
                     return False
+            
+            if total_questions == 130:
+                print(f"✅ Total questions correct: {total_questions}")
             else:
-                print(f"❌ Expected 10 questions, got {len(response)}")
+                print(f"❌ Total questions incorrect: {total_questions}, expected 130")
                 return False
                 
         return success
