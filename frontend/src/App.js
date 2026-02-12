@@ -101,7 +101,6 @@ function App() {
     const questions = allQuestions[currentSection] || [];
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
-      setShowHint(false);
     }
   };
 
