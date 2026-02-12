@@ -329,17 +329,33 @@ class BITSATMockTestAPITester:
                 
         return success
 
-    def test_get_quiz_results(self):
-        """Test getting quiz results"""
+    def test_get_correct_answers(self):
+        """Test getting correct answers (for results review)"""
         success, response = self.run_test(
-            "Get Quiz Results",
+            "Get Correct Answers",
             "GET",
-            "quiz/results",
+            "quiz/correct-answers",
             200
         )
         
-        if success and isinstance(response, list):
-            print(f"✅ Quiz results retrieved successfully ({len(response)} results)")
+        if success and isinstance(response, dict):
+            # Check all sections are present
+            for section in self.sections:
+                if section in response:
+                    answers = response[section]
+                    expected_counts = {
+                        "physics": 30, "chemistry": 30, "english": 10,
+                        "logical": 20, "mathematics": 40
+                    }
+                    
+                    if len(answers) == expected_counts[section]:
+                        print(f"✅ {section.title()}: {len(answers)} correct answers")
+                    else:
+                        print(f"❌ {section.title()}: Expected {expected_counts[section]} answers, got {len(answers)}")
+                        return False
+                else:
+                    print(f"❌ Missing correct answers for {section}")
+                    return False
         
         return success
 
