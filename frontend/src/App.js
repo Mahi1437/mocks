@@ -225,7 +225,7 @@ function App() {
         <div className="start-screen">
           <div className="start-header">
             <img src="https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/BITS_Pilani-Logo.svg/1200px-BITS_Pilani-Logo.svg.png" alt="BITS Pilani" className="logo bits-logo" />
-            <img src="https://edu9.in/wp-content/uploads/2023/06/edu9-logo.png" alt="Edu9 Career Guidance" className="logo edu9-logo" onError={(e) => { e.target.style.display = 'none'; }} />
+            <img src="https://customer-assets.emergentagent.com/job_gemini-link-1/artifacts/mvpyai8y_channels4_profile.jpg" alt="Edu9 Career Guidance" className="logo edu9-logo" />
           </div>
           
           <div className="start-content">
