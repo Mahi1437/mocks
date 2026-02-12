@@ -1,16 +1,18 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import "@/App.css";
 import axios from "axios";
 import { 
   ChevronLeft, ChevronRight, Check, X, RotateCcw, 
   Trophy, Clock, Flag, Trash2, Sun, Moon, BookOpen, Brain,
-  Calculator, FlaskConical, Atom, Languages
+  Calculator, FlaskConical, Atom, Languages, Home, FileText,
+  Award, Users, Target, CheckCircle, Mail, Phone, MapPin,
+  ArrowRight, Zap, Shield, TrendingUp
 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-// Section configuration
+// Section configuration for BITSAT
 const SECTIONS = [
   { id: "physics", name: "Physics", icon: Atom, questions: 30 },
   { id: "chemistry", name: "Chemistry", icon: FlaskConical, questions: 30 },
@@ -19,39 +21,98 @@ const SECTIONS = [
   { id: "mathematics", name: "Mathematics", icon: Calculator, questions: 40 }
 ];
 
+// Mock Tests Data
+const MOCK_TESTS = [
+  {
+    id: "bitsat",
+    name: "BITSAT Mock Test",
+    description: "Birla Institute of Technology and Science Admission Test",
+    questions: 130,
+    duration: "3 hours",
+    color: "#2563eb",
+    available: true
+  },
+  {
+    id: "vit",
+    name: "VITEEE Mock Test",
+    description: "VIT Engineering Entrance Examination",
+    questions: 125,
+    duration: "2.5 hours",
+    color: "#059669",
+    available: false
+  },
+  {
+    id: "srm",
+    name: "SRMJEEE Mock Test",
+    description: "SRM Joint Engineering Entrance Examination",
+    questions: 125,
+    duration: "2.5 hours",
+    color: "#dc2626",
+    available: false
+  },
+  {
+    id: "aeee",
+    name: "AEEE Mock Test",
+    description: "Amrita Engineering Entrance Examination",
+    questions: 100,
+    duration: "2 hours",
+    color: "#7c3aed",
+    available: false
+  }
+];
+
+const BENEFITS = [
+  {
+    icon: Target,
+    title: "Exam-Like Experience",
+    description: "Practice with real exam patterns and difficulty levels"
+  },
+  {
+    icon: TrendingUp,
+    title: "Detailed Analytics",
+    description: "Track your progress with section-wise performance reports"
+  },
+  {
+    icon: Shield,
+    title: "Expert-Curated Questions",
+    description: "Questions designed by top educators and exam experts"
+  }
+];
+
 function App() {
+  // Page state
+  const [currentPage, setCurrentPage] = useState("home"); // home, quiz-start, quiz, results
+  
+  // Quiz states
   const [allQuestions, setAllQuestions] = useState({});
   const [currentSection, setCurrentSection] = useState("physics");
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [markedForReview, setMarkedForReview] = useState({});
-  const [quizStarted, setQuizStarted] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [quizResult, setQuizResult] = useState(null);
   const [correctAnswers, setCorrectAnswers] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
-  const [timeRemaining, setTimeRemaining] = useState(180 * 60); // 3 hours in seconds
+  const [timeRemaining, setTimeRemaining] = useState(180 * 60);
   const [showConfirmSubmit, setShowConfirmSubmit] = useState(false);
 
-  // Fetch all questions
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        const response = await axios.get(`${API}/quiz/all-questions`);
-        setAllQuestions(response.data);
-        setLoading(false);
-      } catch (e) {
-        console.error("Error fetching questions:", e);
-        setLoading(false);
-      }
-    };
-    fetchQuestions();
-  }, []);
+  // Fetch questions when starting quiz
+  const fetchQuestions = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${API}/quiz/all-questions`);
+      setAllQuestions(response.data);
+      setLoading(false);
+    } catch (e) {
+      console.error("Error fetching questions:", e);
+      setLoading(false);
+    }
+  };
 
   // Timer
   useEffect(() => {
-    if (!quizStarted || quizCompleted) return;
+    if (currentPage !== "quiz" || quizCompleted) return;
     
     const timer = setInterval(() => {
       setTimeRemaining(prev => {
@@ -65,13 +126,27 @@ function App() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [quizStarted, quizCompleted]);
+  }, [currentPage, quizCompleted]);
 
   const formatTime = (seconds) => {
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
     return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const handleStartTest = async (testId) => {
+    if (testId === "bitsat") {
+      await fetchQuestions();
+      setCurrentPage("quiz-start");
+    } else {
+      alert("This mock test will be available soon!");
+    }
+  };
+
+  const handleBeginQuiz = () => {
+    setCurrentPage("quiz");
+    setTimeRemaining(180 * 60);
   };
 
   const handleAnswerSelect = (option) => {
@@ -136,12 +211,12 @@ function App() {
         time_taken: timeTaken 
       });
       
-      // Get correct answers for review
       const correctRes = await axios.get(`${API}/quiz/correct-answers`);
       setCorrectAnswers(correctRes.data);
       
       setQuizResult(response.data);
       setQuizCompleted(true);
+      setCurrentPage("results");
       setShowConfirmSubmit(false);
     } catch (e) {
       console.error("Error submitting quiz:", e);
@@ -153,7 +228,20 @@ function App() {
     setCurrentQuestion(0);
     setSelectedAnswers({});
     setMarkedForReview({});
-    setQuizStarted(false);
+    setQuizCompleted(false);
+    setQuizResult(null);
+    setCorrectAnswers({});
+    setTimeRemaining(180 * 60);
+    setShowConfirmSubmit(false);
+    setCurrentPage("quiz-start");
+  };
+
+  const handleGoHome = () => {
+    setCurrentPage("home");
+    setCurrentSection("physics");
+    setCurrentQuestion(0);
+    setSelectedAnswers({});
+    setMarkedForReview({});
     setQuizCompleted(false);
     setQuizResult(null);
     setCorrectAnswers({});
@@ -201,19 +289,226 @@ function App() {
     return { totalQuestions, totalAnswered, totalMarked };
   };
 
-  if (loading) {
+  // ==================== HOMEPAGE ====================
+  if (currentPage === "home") {
     return (
-      <div className={`app-container ${darkMode ? 'dark' : 'light'}`} data-testid="loading-screen">
-        <div className="loading-screen">
-          <div className="spinner"></div>
-          <p>Loading BITSAT Mock Test...</p>
-        </div>
+      <div className={`app-container ${darkMode ? 'dark' : 'light'}`} data-testid="homepage">
+        {/* Navigation Header */}
+        <header className="home-header">
+          <div className="header-container">
+            <div className="logo-section">
+              <img src="https://customer-assets.emergentagent.com/job_gemini-link-1/artifacts/mvpyai8y_channels4_profile.jpg" alt="Edu9" className="main-logo" />
+              <span className="brand-name">Edu9 Career Guidance</span>
+            </div>
+            <nav className="main-nav">
+              <a href="#" className="nav-link active" data-testid="nav-home">
+                <Home size={18} />
+                Home
+              </a>
+              <a href="#mock-tests" className="nav-link" data-testid="nav-tests">
+                <FileText size={18} />
+                Mock Tests
+              </a>
+              <a href="#benefits" className="nav-link">
+                <Award size={18} />
+                Benefits
+              </a>
+              <a href="#contact" className="nav-link">
+                <Phone size={18} />
+                Contact
+              </a>
+            </nav>
+            <button className="theme-toggle" onClick={() => setDarkMode(!darkMode)}>
+              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+          </div>
+        </header>
+
+        {/* Hero Section */}
+        <section className="hero-section">
+          <div className="hero-content">
+            <div className="hero-badge">🎯 #1 Engineering Entrance Preparation</div>
+            <h1 className="hero-title">
+              Ace Your Engineering<br />
+              <span className="gradient-text">Entrance Exams</span>
+            </h1>
+            <p className="hero-subtitle">
+              Practice with India's most comprehensive mock tests for BITSAT, VITEEE, SRMJEEE & more. 
+              Get real exam experience and boost your confidence.
+            </p>
+            <div className="hero-buttons">
+              <button className="primary-btn" onClick={() => handleStartTest("bitsat")} data-testid="start-free-test">
+                Start Free Test
+                <ArrowRight size={20} />
+              </button>
+              <a href="#mock-tests" className="secondary-btn">
+                View All Tests
+              </a>
+            </div>
+            <div className="hero-stats">
+              <div className="stat-item">
+                <span className="stat-number">10,000+</span>
+                <span className="stat-label">Students</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-number">500+</span>
+                <span className="stat-label">Questions</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-number">98%</span>
+                <span className="stat-label">Success Rate</span>
+              </div>
+            </div>
+          </div>
+          <div className="hero-visual">
+            <div className="floating-card card-1">
+              <Atom size={24} />
+              <span>Physics</span>
+            </div>
+            <div className="floating-card card-2">
+              <FlaskConical size={24} />
+              <span>Chemistry</span>
+            </div>
+            <div className="floating-card card-3">
+              <Calculator size={24} />
+              <span>Mathematics</span>
+            </div>
+            <div className="floating-card card-4">
+              <Brain size={24} />
+              <span>Reasoning</span>
+            </div>
+          </div>
+        </section>
+
+        {/* Mock Tests Section */}
+        <section className="mock-tests-section" id="mock-tests">
+          <div className="section-container">
+            <div className="section-header">
+              <h2 className="section-title">Available Mock Tests</h2>
+              <p className="section-subtitle">Choose from our comprehensive collection of entrance exam mock tests</p>
+            </div>
+            <div className="tests-grid">
+              {MOCK_TESTS.map(test => (
+                <div key={test.id} className={`test-card ${!test.available ? 'coming-soon' : ''}`} style={{'--card-color': test.color}}>
+                  <div className="test-card-header">
+                    <div className="test-icon" style={{background: test.color}}>
+                      <FileText size={24} />
+                    </div>
+                    {!test.available && <span className="coming-soon-badge">Coming Soon</span>}
+                  </div>
+                  <h3 className="test-name">{test.name}</h3>
+                  <p className="test-description">{test.description}</p>
+                  <div className="test-meta">
+                    <div className="meta-item">
+                      <FileText size={16} />
+                      <span>{test.questions} Questions</span>
+                    </div>
+                    <div className="meta-item">
+                      <Clock size={16} />
+                      <span>{test.duration}</span>
+                    </div>
+                  </div>
+                  <button 
+                    className="take-test-btn" 
+                    onClick={() => handleStartTest(test.id)}
+                    disabled={!test.available}
+                    data-testid={`take-test-${test.id}`}
+                    style={{background: test.available ? test.color : undefined}}
+                  >
+                    {test.available ? 'Take Test' : 'Coming Soon'}
+                    {test.available && <ArrowRight size={18} />}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Benefits Section */}
+        <section className="benefits-section" id="benefits">
+          <div className="section-container">
+            <div className="section-header">
+              <h2 className="section-title">Why Choose Edu9?</h2>
+              <p className="section-subtitle">Experience the best preparation platform for engineering entrances</p>
+            </div>
+            <div className="benefits-grid">
+              {BENEFITS.map((benefit, index) => (
+                <div key={index} className="benefit-card">
+                  <div className="benefit-icon">
+                    <benefit.icon size={28} />
+                  </div>
+                  <h3 className="benefit-title">{benefit.title}</h3>
+                  <p className="benefit-description">{benefit.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="cta-section">
+          <div className="cta-content">
+            <h2>Ready to Start Your Preparation?</h2>
+            <p>Join thousands of students who are already preparing with Edu9</p>
+            <button className="cta-btn" onClick={() => handleStartTest("bitsat")}>
+              Start BITSAT Mock Test
+              <Zap size={20} />
+            </button>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="main-footer" id="contact">
+          <div className="footer-container">
+            <div className="footer-brand">
+              <img src="https://customer-assets.emergentagent.com/job_gemini-link-1/artifacts/mvpyai8y_channels4_profile.jpg" alt="Edu9" className="footer-logo" />
+              <p className="footer-tagline">Your trusted partner for engineering entrance exam preparation</p>
+            </div>
+            <div className="footer-links">
+              <div className="footer-column">
+                <h4>Quick Links</h4>
+                <a href="#">Home</a>
+                <a href="#mock-tests">Mock Tests</a>
+                <a href="#benefits">Benefits</a>
+              </div>
+              <div className="footer-column">
+                <h4>Mock Tests</h4>
+                <a href="#">BITSAT</a>
+                <a href="#">VITEEE</a>
+                <a href="#">SRMJEEE</a>
+              </div>
+              <div className="footer-column">
+                <h4>Contact Us</h4>
+                <a href="tel:9133311450">
+                  <Phone size={14} /> 9133311450
+                </a>
+                <a href="mailto:info@edu9.in">
+                  <Mail size={14} /> info@edu9.in
+                </a>
+              </div>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <p>© 2025 Edu9 Career Guidance. All rights reserved.</p>
+          </div>
+        </footer>
       </div>
     );
   }
 
-  // Start Screen
-  if (!quizStarted && !quizCompleted) {
+  // ==================== QUIZ START SCREEN ====================
+  if (currentPage === "quiz-start") {
+    if (loading) {
+      return (
+        <div className={`app-container ${darkMode ? 'dark' : 'light'}`}>
+          <div className="loading-screen">
+            <div className="spinner"></div>
+            <p>Loading BITSAT Mock Test...</p>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className={`app-container ${darkMode ? 'dark' : 'light'}`} data-testid="start-screen">
         <div className="start-screen">
@@ -271,9 +566,16 @@ function App() {
               </div>
             </div>
 
-            <button className="start-btn" onClick={() => setQuizStarted(true)} data-testid="start-test-btn">
-              Start Test
-            </button>
+            <div className="start-buttons">
+              <button className="back-btn" onClick={handleGoHome}>
+                <ChevronLeft size={20} />
+                Back to Home
+              </button>
+              <button className="start-btn" onClick={handleBeginQuiz} data-testid="start-test-btn">
+                Start Test
+                <ArrowRight size={20} />
+              </button>
+            </div>
           </div>
 
           <div className="promo-banner">
@@ -285,10 +587,8 @@ function App() {
     );
   }
 
-  // Results Screen
-  if (quizCompleted && quizResult) {
-    const totalStats = getTotalStats();
-    
+  // ==================== RESULTS SCREEN ====================
+  if (currentPage === "results" && quizResult) {
     return (
       <div className={`app-container ${darkMode ? 'dark' : 'light'}`} data-testid="results-screen">
         <div className="results-container">
@@ -299,7 +599,6 @@ function App() {
           </div>
 
           <div className="results-content">
-            {/* Score Overview Card */}
             <div className="score-overview-card">
               <div className="score-main">
                 <div className="score-circle-container">
@@ -334,7 +633,6 @@ function App() {
               </div>
             </div>
 
-            {/* Section-wise Performance Table */}
             <div className="section-table-container">
               <h3>Section-wise Performance</h3>
               <div className="section-table">
@@ -367,10 +665,16 @@ function App() {
               </div>
             </div>
 
-            <button className="restart-btn" onClick={handleRestart} data-testid="restart-btn">
-              <RotateCcw size={18} />
-              Take Test Again
-            </button>
+            <div className="results-actions">
+              <button className="home-btn" onClick={handleGoHome}>
+                <Home size={18} />
+                Back to Home
+              </button>
+              <button className="restart-btn" onClick={handleRestart} data-testid="restart-btn">
+                <RotateCcw size={18} />
+                Take Test Again
+              </button>
+            </div>
           </div>
 
           <div className="promo-banner">
@@ -382,18 +686,16 @@ function App() {
     );
   }
 
-  // Main Quiz Screen
+  // ==================== QUIZ SCREEN ====================
   const questions = allQuestions[currentSection] || [];
   const question = questions[currentQuestion];
   const currentKey = `${currentSection}-${currentQuestion + 1}`;
   const selectedAnswer = selectedAnswers[currentKey];
   const isMarked = markedForReview[currentKey];
   const totalStats = getTotalStats();
-  const currentSectionStats = getSectionStats(currentSection);
 
   return (
     <div className={`app-container ${darkMode ? 'dark' : 'light'}`} data-testid="quiz-screen">
-      {/* Header */}
       <header className="quiz-header">
         <div className="header-left">
           <img src="https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/BITS_Pilani-Logo.svg/1200px-BITS_Pilani-Logo.svg.png" alt="BITS Pilani" className="logo-small" />
@@ -415,7 +717,6 @@ function App() {
         </div>
       </header>
 
-      {/* Section Tabs */}
       <div className="section-tabs">
         {SECTIONS.map(section => {
           const stats = getSectionStats(section.id);
@@ -436,7 +737,6 @@ function App() {
       </div>
 
       <div className="quiz-body">
-        {/* Question Panel */}
         <div className="question-panel">
           <div className="question-header">
             <span className="question-number" data-testid="question-number">
@@ -505,7 +805,6 @@ function App() {
           </div>
         </div>
 
-        {/* Question Palette */}
         <div className="question-palette">
           <div className="palette-header">
             <h3>Question Palette</h3>
@@ -550,12 +849,10 @@ function App() {
         </div>
       </div>
 
-      {/* Promotional Footer */}
       <footer className="promo-footer">
         <p>🎓 <strong>Edu9 Career Guidance</strong> - Expert counseling for BITS Pilani admissions | 📞 <a href="tel:9133311450">9133311450</a> | 📧 <a href="mailto:info@edu9.in">info@edu9.in</a></p>
       </footer>
 
-      {/* Submit Confirmation Modal */}
       {showConfirmSubmit && (
         <div className="modal-overlay" data-testid="confirm-modal">
           <div className="modal-content">
