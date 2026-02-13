@@ -464,7 +464,8 @@ async def register_employee(data: EmployeeRegister):
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     await db.employees.insert_one(employee)
-    return {"success": True, "employee_id": employee["id"], "message": "Registration successful"}
+    # Return full employee data (excluding MongoDB _id)
+    return {"_id": employee["id"], "name": employee["name"], "designation": employee["designation"], "mobile": employee["mobile"], "email": employee["email"]}
 
 class EmployeeLogin(BaseModel):
     mobile: str
