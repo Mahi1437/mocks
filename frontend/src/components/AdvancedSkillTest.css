@@ -1046,11 +1046,12 @@
   font-size: 1rem;
   font-weight: 700;
   margin: 0;
+  color: var(--text-primary);
 }
 
 .answered-count {
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .palette-legend {
@@ -1074,7 +1075,7 @@
   align-items: center;
   gap: 6px;
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .palette-legend .dot {
