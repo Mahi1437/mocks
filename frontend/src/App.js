@@ -15,6 +15,25 @@ const API = `${BACKEND_URL}/api`;
 
 // Mock Tests Configuration
 const MOCK_TESTS_CONFIG = {
+  skilltest: {
+    id: "skilltest",
+    name: "Skill Test",
+    fullName: "Skill Assessment Test 2025",
+    institution: "Edu9 Career Guidance",
+    description: "Comprehensive Skill Assessment Test",
+    questions: 50,
+    duration: "1 hour",
+    durationSeconds: 60 * 60,
+    maxMarks: 150,
+    color: "#10b981",
+    available: true,
+    logo: "https://customer-assets.emergentagent.com/job_gemini-link-1/artifacts/mvpyai8y_channels4_profile.jpg",
+    sections: [
+      { id: "aptitude", name: "Aptitude", icon: "Brain", questions: 20 },
+      { id: "reasoning", name: "Reasoning", icon: "Calculator", questions: 15 },
+      { id: "verbal", name: "Verbal Ability", icon: "Languages", questions: 15 }
+    ]
+  },
   bitsat: {
     id: "bitsat",
     name: "BITSAT Mock Test",
