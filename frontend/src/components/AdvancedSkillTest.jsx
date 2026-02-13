@@ -98,9 +98,15 @@ export default function AdvancedSkillTest() {
   const [adminStats, setAdminStats] = useState(null);
   const [adminTab, setAdminTab] = useState("overview");
   
+  // Session States
+  const [hasActiveSession, setHasActiveSession] = useState(false);
+  const [showResumeDialog, setShowResumeDialog] = useState(false);
+  const [lastActivity, setLastActivity] = useState("");
+  
   // Refs
   const questionStartTime = useRef(Date.now());
   const timerRef = useRef(null);
+  const saveSessionRef = useRef(null);
 
   // Labels based on language
   const labels = {
