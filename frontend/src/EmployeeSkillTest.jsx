@@ -465,9 +465,18 @@ function TestPage({ language, setLanguage, employeeId, setCurrentPage, setTestRe
           <BookOpen size={24} />
           <span>{language === 'te' ? 'నైపుణ్య పరీక్ష' : 'Skill Test'}</span>
         </div>
-        <div className={`timer ${timeRemaining < 300 ? 'warning' : ''}`}>
-          <Clock size={20} />
-          <span>{formatTime(timeRemaining)}</span>
+        <div className="header-center">
+          <div className={`timer ${timeRemaining < 300 ? 'warning' : ''}`}>
+            <Clock size={20} />
+            <span>{formatTime(timeRemaining)}</span>
+          </div>
+          {saveStatus && (
+            <div className={`save-status ${saveStatus}`}>
+              {saveStatus === 'saving' && (language === 'te' ? 'సేవ్ అవుతోంది...' : 'Saving...')}
+              {saveStatus === 'saved' && (language === 'te' ? '✓ సేవ్ అయింది' : '✓ Saved')}
+              {saveStatus === 'error' && (language === 'te' ? '✗ సేవ్ ఎర్రర్' : '✗ Save Error')}
+            </div>
+          )}
         </div>
         <button className="lang-toggle" onClick={() => setLanguage(language === 'en' ? 'te' : 'en')}>
           <Globe size={18} />
