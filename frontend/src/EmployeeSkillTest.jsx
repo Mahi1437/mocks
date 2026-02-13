@@ -330,9 +330,10 @@ function TestPage({ language, setLanguage, employeeId, setCurrentPage, setTestRe
   const [loading, setLoading] = useState(true);
   const [timeRemaining, setTimeRemaining] = useState(170 * 60); // 170 minutes
   const [showConfirm, setShowConfirm] = useState(false);
+  const [saveStatus, setSaveStatus] = useState(''); // For showing save indicator
 
   useEffect(() => {
-    fetchQuestions();
+    fetchQuestionsAndProgress();
   }, []);
 
   useEffect(() => {
@@ -346,16 +347,21 @@ function TestPage({ language, setLanguage, employeeId, setCurrentPage, setTestRe
     return () => clearInterval(timer);
   }, [timeRemaining]);
 
-  const fetchQuestions = async () => {
+  const fetchQuestionsAndProgress = async () => {
     try {
-      const [questionsRes, sectionsRes] = await Promise.all([
+      const [questionsRes, sectionsRes, progressRes] = await Promise.all([
         axios.get(`${API}/questions`),
-        axios.get(`${API}/sections`)
+        axios.get(`${API}/sections`),
+        axios.get(`${API}/get-progress/${employeeId}`)
       ]);
       setQuestions(questionsRes.data.questions);
       setSections(sectionsRes.data.sections);
       if (sectionsRes.data.sections.length > 0) {
         setCurrentSection(sectionsRes.data.sections[0].id);
+      }
+      // Restore saved answers
+      if (progressRes.data.success && progressRes.data.answers) {
+        setAnswers(progressRes.data.answers);
       }
       setLoading(false);
     } catch (err) {
