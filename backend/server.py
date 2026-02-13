@@ -572,7 +572,9 @@ async def submit_employee_test(request: EmployeeSubmitRequest):
         "timestamp": datetime.now(timezone.utc).isoformat()
     }
     
-    await db.employee_test_results.insert_one(result)
+    # Make a copy for database insertion (to avoid _id being added to response)
+    result_for_db = result.copy()
+    await db.employee_test_results.insert_one(result_for_db)
     
     return result
 
