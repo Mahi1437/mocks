@@ -209,7 +209,14 @@ export default function AdvancedSkillTest() {
       warning: "Warning",
       confirmSubmit: "Are you sure you want to submit the test?",
       cancel: "Cancel",
-      confirm: "Confirm"
+      confirm: "Confirm",
+      resumeTest: "Resume Test",
+      startNew: "Start New Test",
+      foundSession: "You have an incomplete test",
+      lastAttempted: "Last attempted",
+      questionsAnswered: "Questions answered",
+      timeLeft: "Time remaining",
+      continueWhere: "Would you like to continue where you left off?"
     }
   };
   
