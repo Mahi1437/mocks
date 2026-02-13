@@ -523,7 +523,7 @@ async def clear_progress(employee_id: str):
 @api_router.post("/employee-skill/admin/login")
 async def admin_login(data: AdminLogin):
     # Simple admin auth (in production, use proper auth)
-    if data.email == "venureddy.josh" and data.password == "Josh@123":
+    if data.username == "venureddy.josh" and data.password == "Josh@123":
         return {"success": True, "message": "Login successful", "admin_id": "admin-001"}
     return {"success": False, "message": "Invalid credentials"}
 
