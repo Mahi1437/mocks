@@ -456,10 +456,10 @@
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  background: transparent;
+  background: var(--bg-tertiary);
   border: 2px solid transparent;
   border-radius: 10px;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
@@ -468,16 +468,17 @@
 
 .section-tab:hover {
   background: var(--hover-bg);
+  border-color: var(--border-color);
 }
 
 .section-tab.active {
-  background: rgba(37, 99, 235, 0.1);
+  background: rgba(37, 99, 235, 0.15);
   border-color: var(--primary);
   color: var(--primary);
 }
 
 .tab-progress {
-  background: var(--bg-tertiary);
+  background: var(--bg-secondary);
   padding: 2px 8px;
   border-radius: 6px;
   font-size: 0.8rem;
