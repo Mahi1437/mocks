@@ -1199,16 +1199,17 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: left;
+  color: var(--text-primary);
 }
 
 .option-btn:hover {
   border-color: var(--primary);
-  background: rgba(37, 99, 235, 0.08);
+  background: rgba(37, 99, 235, 0.15);
   transform: translateX(8px);
 }
 
 .option-btn.selected {
-  background: rgba(37, 99, 235, 0.12);
+  background: rgba(37, 99, 235, 0.2);
   border-color: var(--primary);
 }
 
@@ -1239,7 +1240,8 @@ body {
 .option-value {
   flex: 1;
   font-size: 1rem;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
+  line-height: 1.5;
 }
 
 .check-icon {
