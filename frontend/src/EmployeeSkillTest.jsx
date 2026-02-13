@@ -1038,6 +1038,8 @@ export default function EmployeeSkillTest() {
         return <LandingPage language={language} setLanguage={setLanguage} setCurrentPage={setCurrentPage} setEmployeeId={setEmployeeId} />;
       case 'register':
         return <RegisterPage language={language} setLanguage={setLanguage} setCurrentPage={setCurrentPage} setEmployeeId={setEmployeeId} />;
+      case 'employee-login':
+        return <EmployeeLoginPage language={language} setLanguage={setLanguage} setCurrentPage={setCurrentPage} setEmployeeId={setEmployeeId} />;
       case 'admin-login':
         return <AdminLoginPage language={language} setLanguage={setLanguage} setCurrentPage={setCurrentPage} setIsAdmin={setIsAdmin} />;
       case 'test':
