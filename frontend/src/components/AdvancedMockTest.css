@@ -692,11 +692,12 @@
 .nav-btn.prev:hover:not(:disabled) {
   border-color: var(--primary);
   color: var(--primary);
+  background: var(--hover-bg);
 }
 
 .nav-btn.next {
   background: var(--primary);
-  color: white;
+  color: white !important;
 }
 
 .nav-btn.next:hover:not(:disabled) {
@@ -709,14 +710,14 @@
 }
 
 .nav-btn.mark-next {
-  background: rgba(139, 92, 246, 0.15);
+  background: rgba(139, 92, 246, 0.2);
   color: var(--purple);
   border: 2px solid var(--purple);
 }
 
 .nav-btn.mark-next:hover {
   background: var(--purple);
-  color: white;
+  color: white !important;
 }
 
 /* Question Palette */
@@ -742,11 +743,12 @@
   font-size: 1rem;
   font-weight: 700;
   margin: 0;
+  color: var(--text-primary);
 }
 
 .answered-count {
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 /* Palette Legend */
