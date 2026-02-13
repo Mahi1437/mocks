@@ -1193,7 +1193,7 @@ body {
   align-items: center;
   gap: 16px;
   padding: 18px 24px;
-  background: var(--bg-tertiary);
+  background: var(--bg-secondary);
   border: 2px solid var(--border-color);
   border-radius: 12px;
   cursor: pointer;
@@ -1217,30 +1217,31 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  background: var(--bg-secondary);
+  width: 40px;
+  height: 40px;
+  background: var(--primary);
   border-radius: 10px;
   font-weight: 700;
-  color: var(--primary);
+  color: white;
   flex-shrink: 0;
   transition: all 0.3s ease;
 }
 
 .option-btn:hover .option-key {
-  background: var(--primary);
+  background: var(--primary-hover);
   color: white;
 }
 
 .option-btn.selected .option-key {
-  background: var(--primary);
+  background: var(--success);
   color: white;
 }
 
 .option-value {
   flex: 1;
-  font-size: 1rem;
-  color: var(--text-primary) !important;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  font-weight: 500;
   line-height: 1.5;
 }
 
