@@ -617,10 +617,76 @@
   font-weight: 600;
   cursor: pointer;
   transition: background 0.3s;
+  margin-top: 0.5rem;
 }
 
 .submit-test-btn:hover {
   background: #c53030;
+}
+
+/* Save Section Button */
+.save-section-btn {
+  width: 100%;
+  padding: 1rem;
+  background: #0077b6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 0.5rem;
+}
+
+.save-section-btn:hover {
+  background: #005a8c;
+}
+
+.save-section-btn.saving {
+  background: #f59e0b;
+}
+
+.save-section-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Section Progress */
+.section-progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: #f0f4f8;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.section-progress-info p {
+  margin: 0;
+  font-weight: 500;
+  color: #1e3a5f;
+}
+
+.saved-badge {
+  background: #d1fae5;
+  color: #065f46;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.save-error {
+  color: #dc2626;
+  text-align: center;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.dot.saved {
+  background: #0077b6;
 }
 
 /* Modal */
