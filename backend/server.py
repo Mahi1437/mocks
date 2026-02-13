@@ -410,7 +410,7 @@ EMPLOYEE_SECTIONS = {
 # Models for Employee Skill Assessment
 class EmployeeRegister(BaseModel):
     name: str
-    phone: str
+    designation: str
     mobile: str
     email: str
 
