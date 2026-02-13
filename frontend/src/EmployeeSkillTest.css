@@ -389,12 +389,17 @@
   color: #1e3a5f;
 }
 
+.question-content {
+  margin-bottom: 1.5rem;
+}
+
 .question-text {
-  font-size: 1.15rem;
-  line-height: 1.8;
-  margin-bottom: 2rem;
-  color: #1e293b;
-  font-weight: 500;
+  font-size: 1.15rem !important;
+  line-height: 1.8 !important;
+  margin-bottom: 2rem !important;
+  color: #1a1a2e !important;
+  font-weight: 500 !important;
+  background: transparent;
 }
 
 .options-list {
