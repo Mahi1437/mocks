@@ -394,89 +394,140 @@ async def get_correct_answers():
         "mathematics": {q["id"]: q["correct_answer"] for q in MATHEMATICS_QUESTIONS}
     }
 
-# ============== SKILL TEST API ENDPOINTS ==============
+# ============== EMPLOYEE SKILL ASSESSMENT API ENDPOINTS ==============
+# Import questions from separate file
+from employee_questions import EMPLOYEE_SKILL_QUESTIONS
 
-@api_router.get("/skilltest/sections")
-async def get_skilltest_sections():
-    return {
-        "sections": [
-            {"id": "aptitude", "name": "Aptitude", "questions": 20, "marks_per_question": 3, "negative_marking": -1},
-            {"id": "reasoning", "name": "Reasoning", "questions": 15, "marks_per_question": 3, "negative_marking": -1},
-            {"id": "verbal", "name": "Verbal Ability", "questions": 15, "marks_per_question": 3, "negative_marking": -1}
-        ],
-        "total_questions": 50,
-        "max_marks": 150,
-        "duration_minutes": 60
-    }
+# Section configuration for Employee Skill Assessment
+EMPLOYEE_SECTIONS = {
+    "parent_interaction": {"name": "Parent Interaction", "name_te": "పేరెంట్ ఇంటరాక్షన్"},
+    "counseling": {"name": "Counseling", "name_te": "కౌన్సెలింగ్"},
+    "ethics": {"name": "Ethics", "name_te": "నైతికత"},
+    "data_privacy": {"name": "Data Privacy", "name_te": "డేటా ప్రైవసీ"},
+    "communication": {"name": "Communication", "name_te": "కమ్యూనికేషన్"}
+}
 
-@api_router.get("/skilltest/all-questions")
-async def get_skilltest_all_questions():
-    return {
-        "aptitude": [QuizQuestion(id=q["id"], question=q["question"], options=q["options"], hint=q["hint"]) for q in APTITUDE_QUESTIONS],
-        "reasoning": [QuizQuestion(id=q["id"], question=q["question"], options=q["options"], hint=q["hint"]) for q in REASONING_QUESTIONS],
-        "verbal": [QuizQuestion(id=q["id"], question=q["question"], options=q["options"], hint=q["hint"]) for q in VERBAL_QUESTIONS]
-    }
+# Models for Employee Skill Assessment
+class EmployeeRegister(BaseModel):
+    name: str
+    phone: str
+    mobile: str
+    email: str
 
-@api_router.post("/skilltest/submit")
-async def submit_skilltest(request: SubmitQuizRequest):
-    questions_map = {
-        "aptitude": APTITUDE_QUESTIONS,
-        "reasoning": REASONING_QUESTIONS,
-        "verbal": VERBAL_QUESTIONS
+class AdminLogin(BaseModel):
+    email: str
+    password: str
+
+class EmployeeAnswer(BaseModel):
+    question_id: int
+    selected_answer: int
+
+class EmployeeSubmitRequest(BaseModel):
+    employee_id: str
+    answers: List[EmployeeAnswer]
+    time_taken: int
+
+@api_router.get("/employee-skill/")
+async def employee_skill_root():
+    return {"message": "Employee Skill Assessment API"}
+
+@api_router.get("/employee-skill/questions")
+async def get_employee_questions():
+    return {"questions": EMPLOYEE_SKILL_QUESTIONS}
+
+@api_router.get("/employee-skill/sections")
+async def get_employee_sections():
+    sections = []
+    for section_id, section_info in EMPLOYEE_SECTIONS.items():
+        count = len([q for q in EMPLOYEE_SKILL_QUESTIONS if q["section"] == section_id])
+        sections.append({
+            "id": section_id,
+            "name": section_info["name"],
+            "name_te": section_info["name_te"],
+            "questions": count
+        })
+    return {"sections": sections, "total_questions": len(EMPLOYEE_SKILL_QUESTIONS)}
+
+@api_router.post("/employee-skill/register")
+async def register_employee(data: EmployeeRegister):
+    employee = {
+        "id": str(uuid.uuid4()),
+        "name": data.name,
+        "phone": data.phone,
+        "mobile": data.mobile,
+        "email": data.email,
+        "created_at": datetime.now(timezone.utc).isoformat()
     }
+    await db.employees.insert_one(employee)
+    return {"success": True, "employee_id": employee["id"], "message": "Registration successful"}
+
+@api_router.post("/employee-skill/admin/login")
+async def admin_login(data: AdminLogin):
+    # Simple admin auth (in production, use proper auth)
+    if data.email == "admin@edu9.in" and data.password == "admin123":
+        return {"success": True, "message": "Login successful", "admin_id": "admin-001"}
+    return {"success": False, "message": "Invalid credentials"}
+
+@api_router.post("/employee-skill/submit")
+async def submit_employee_test(request: EmployeeSubmitRequest):
+    # Get employee info
+    employee = await db.employees.find_one({"id": request.employee_id}, {"_id": 0})
     
-    section_results = []
-    total_marks = 0
+    section_results = {}
+    total_correct = 0
+    total_attempted = 0
     
-    for section_id, questions in questions_map.items():
-        section_answers = [a for a in request.answers if a.section == section_id]
+    for section_id in EMPLOYEE_SECTIONS.keys():
+        section_questions = [q for q in EMPLOYEE_SKILL_QUESTIONS if q["section"] == section_id]
+        section_answers = [a for a in request.answers if any(q["id"] == a.question_id and q["section"] == section_id for q in EMPLOYEE_SKILL_QUESTIONS)]
         
-        attempted = 0
         correct = 0
-        wrong = 0
+        attempted = len(section_answers)
         
-        for q in questions:
-            answer = next((a for a in section_answers if a.question_id == q["id"]), None)
-            if answer and answer.selected_answer:
-                attempted += 1
-                if answer.selected_answer == q["correct_answer"]:
-                    correct += 1
-                else:
-                    wrong += 1
+        for answer in section_answers:
+            question = next((q for q in section_questions if q["id"] == answer.question_id), None)
+            if question and answer.selected_answer == question["correct_answer"]:
+                correct += 1
         
-        section_marks = (correct * 3) + (wrong * -1)
-        total_marks += section_marks
-        
-        section_name = {
-            "aptitude": "Aptitude",
-            "reasoning": "Reasoning",
-            "verbal": "Verbal Ability"
-        }[section_id]
-        
-        section_results.append(SectionResult(
-            section_name=section_name,
-            total_questions=len(questions),
-            attempted=attempted,
-            correct=correct,
-            wrong=wrong,
-            marks=section_marks
-        ))
+        section_results[section_id] = {
+            "name": EMPLOYEE_SECTIONS[section_id]["name"],
+            "total": len(section_questions),
+            "attempted": attempted,
+            "correct": correct,
+            "percentage": (correct / len(section_questions) * 100) if section_questions else 0
+        }
+        total_correct += correct
+        total_attempted += attempted
     
-    max_marks = 150
-    percentage = (total_marks / max_marks) * 100 if max_marks > 0 else 0
+    total_questions = len(EMPLOYEE_SKILL_QUESTIONS)
+    overall_percentage = (total_correct / total_questions * 100) if total_questions else 0
     
-    result = QuizResult(
-        sections=section_results,
-        total_marks=total_marks,
-        max_marks=max_marks,
-        percentage=percentage,
-        time_taken=request.time_taken
-    )
+    result = {
+        "id": str(uuid.uuid4()),
+        "employee_id": request.employee_id,
+        "employee_name": employee["name"] if employee else "Unknown",
+        "sections": section_results,
+        "total_questions": total_questions,
+        "total_attempted": total_attempted,
+        "total_correct": total_correct,
+        "percentage": round(overall_percentage, 2),
+        "time_taken": request.time_taken,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
     
-    result_dict = result.model_dump()
-    result_dict['timestamp'] = result_dict['timestamp'].isoformat()
-    result_dict['test_type'] = 'skilltest'
-    await db.skilltest_results.insert_one(result_dict)
+    await db.employee_test_results.insert_one(result)
+    
+    return result
+
+@api_router.get("/employee-skill/admin/results")
+async def get_all_results():
+    results = await db.employee_test_results.find({}, {"_id": 0}).to_list(1000)
+    return {"results": results}
+
+@api_router.get("/employee-skill/admin/employees")
+async def get_all_employees():
+    employees = await db.employees.find({}, {"_id": 0}).to_list(1000)
+    return {"employees": employees}
     
     return result
 
