@@ -503,11 +503,33 @@ export default function AdvancedSkillTest() {
   };
 
   // Begin quiz
-  const handleBeginQuiz = async () => {
+  const handleBeginQuiz = async (resumeSession = false) => {
     const success = await fetchQuestions();
     if (success) {
+      if (resumeSession) {
+        // Restore from saved session
+        const pendingSession = sessionStorage.getItem('pendingSession');
+        if (pendingSession) {
+          const session = JSON.parse(pendingSession);
+          await restoreSession(session);
+          sessionStorage.removeItem('pendingSession');
+        }
+      } else {
+        // Start fresh
+        setTimeRemaining(TEST_CONFIG.durationSeconds);
+      }
+      setShowResumeDialog(false);
       setCurrentPage("quiz");
-      setTimeRemaining(TEST_CONFIG.durationSeconds);
+    }
+  };
+
+  // Handle resume test choice
+  const handleResumeChoice = async (shouldResume) => {
+    if (shouldResume) {
+      await handleBeginQuiz(true);
+    } else {
+      await startFreshTest();
+      await handleBeginQuiz(false);
     }
   };
 
