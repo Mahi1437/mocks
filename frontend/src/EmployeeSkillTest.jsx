@@ -330,7 +330,7 @@ function TestPage({ language, setLanguage, employeeId, setCurrentPage, setTestRe
       const response = await axios.post(`${API}/submit`, {
         employee_id: employeeId,
         answers: answersList,
-        time_taken: (45 * 60) - timeRemaining
+        time_taken: (170 * 60) - timeRemaining
       });
 
       setTestResult(response.data);
