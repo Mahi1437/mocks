@@ -240,6 +240,27 @@
   cursor: pointer;
 }
 
+.login-link-btn {
+  display: block;
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 0.75rem;
+  background: transparent;
+  border: 2px solid #0077b6;
+  border-radius: 8px;
+  color: #0077b6;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.login-link-btn:hover {
+  background: #0077b6;
+  color: white;
+}
+
 .register-info-section {
   flex: 1;
   background: linear-gradient(135deg, #0077b6 0%, #1e3a5f 100%);
