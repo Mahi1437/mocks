@@ -122,8 +122,9 @@ const QUESTION_STATUS = {
 };
 
 // ==================== ADVANCED MOCK TEST COMPONENT ====================
-export default function AdvancedMockTest({ darkMode, setDarkMode }) {
-  const { testId } = useParams();
+export default function AdvancedMockTest({ darkMode, setDarkMode, testId: propTestId }) {
+  const { testId: paramTestId } = useParams();
+  const testId = propTestId || paramTestId;
   const navigate = useNavigate();
   const testConfig = MOCK_TESTS_CONFIG[testId];
   
