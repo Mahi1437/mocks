@@ -476,6 +476,48 @@ async def login_employee(data: EmployeeLogin):
         return {"success": True, "employee_id": employee["id"], "employee_name": employee["name"], "message": "Login successful"}
     return {"success": False, "message": "Mobile number not found. Please register."}
 
+# Auto-save answer model
+class SaveAnswerRequest(BaseModel):
+    employee_id: str
+    question_id: int
+    selected_answer: int
+    section: str
+
+@api_router.post("/employee-skill/save-answer")
+async def save_answer(data: SaveAnswerRequest):
+    """Auto-save individual answer when employee selects an option"""
+    # Upsert the answer - update if exists, insert if new
+    await db.employee_progress.update_one(
+        {"employee_id": data.employee_id, "question_id": data.question_id},
+        {"$set": {
+            "employee_id": data.employee_id,
+            "question_id": data.question_id,
+            "selected_answer": data.selected_answer,
+            "section": data.section,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }},
+        upsert=True
+    )
+    return {"success": True, "message": "Answer saved"}
+
+@api_router.get("/employee-skill/get-progress/{employee_id}")
+async def get_progress(employee_id: str):
+    """Get saved answers for an employee to restore progress"""
+    progress = await db.employee_progress.find(
+        {"employee_id": employee_id}, 
+        {"_id": 0}
+    ).to_list(500)
+    
+    # Convert to dictionary format {question_id: selected_answer}
+    answers = {p["question_id"]: p["selected_answer"] for p in progress}
+    return {"success": True, "answers": answers, "count": len(answers)}
+
+@api_router.delete("/employee-skill/clear-progress/{employee_id}")
+async def clear_progress(employee_id: str):
+    """Clear saved progress after test submission"""
+    await db.employee_progress.delete_many({"employee_id": employee_id})
+    return {"success": True, "message": "Progress cleared"}
+
 @api_router.post("/employee-skill/admin/login")
 async def admin_login(data: AdminLogin):
     # Simple admin auth (in production, use proper auth)
