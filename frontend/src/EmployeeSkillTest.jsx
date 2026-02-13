@@ -252,7 +252,7 @@ function TestPage({ language, setLanguage, employeeId, setCurrentPage, setTestRe
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
-  const [timeRemaining, setTimeRemaining] = useState(45 * 60); // 45 minutes
+  const [timeRemaining, setTimeRemaining] = useState(170 * 60); // 170 minutes
   const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
