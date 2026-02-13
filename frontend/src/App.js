@@ -482,7 +482,10 @@ function MockTestPage({ darkMode, setDarkMode }) {
       });
 
       const timeTaken = (testConfig?.durationSeconds || 180 * 60) - timeRemaining;
-      const response = await axios.post(`${API}/quiz/submit`, { answers, time_taken: timeTaken });
+      
+      // Use correct endpoint based on test type
+      const endpoint = testId === 'skilltest' ? `${API}/skilltest/submit` : `${API}/quiz/submit`;
+      const response = await axios.post(endpoint, { answers, time_taken: timeTaken });
       
       setQuizResult(response.data);
       setQuizCompleted(true);
