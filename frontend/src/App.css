@@ -39,28 +39,49 @@
   --card-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
-/* Dark Mode Option Styles */
-.app-container.dark .option-btn {
+/* Dark Mode Question & Option Styles */
+.app-container.dark .question-panel {
   background: #1e293b;
+}
+
+.app-container.dark .question-text {
+  color: #f1f5f9 !important;
+}
+
+.app-container.dark .question-content {
+  color: #f1f5f9;
+}
+
+.app-container.dark .option-btn {
+  background: #334155;
   border-color: #475569;
   color: #f1f5f9;
 }
 
 .app-container.dark .option-btn:hover {
-  background: #334155;
+  background: #3d4f66;
   border-color: #3b82f6;
 }
 
 .app-container.dark .option-btn.selected {
-  background: rgba(59, 130, 246, 0.2);
+  background: rgba(59, 130, 246, 0.3);
   border-color: #3b82f6;
 }
 
 .app-container.dark .option-value {
+  color: #f1f5f9 !important;
+}
+
+.app-container.dark .option-key {
+  background: #3b82f6;
+  color: white;
+}
+
+.app-container.dark .question-header {
   color: #f1f5f9;
 }
 
-.app-container.dark .question-text {
+.app-container.dark .question-number {
   color: #f1f5f9;
 }
 
