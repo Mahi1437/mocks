@@ -1128,11 +1128,43 @@ export default function AdvancedSkillTest() {
             <button className="back-btn" onClick={() => setCurrentPage("landing")}>
               <ChevronLeft size={20} /> {t.backHome}
             </button>
-            <button className="start-btn" onClick={handleBeginQuiz} data-testid="begin-test-btn">
+            <button className="start-btn" onClick={() => handleBeginQuiz(false)} data-testid="begin-test-btn">
               {t.beginTest} <Zap size={20} />
             </button>
           </div>
         </div>
+
+        {/* Resume Test Dialog */}
+        {showResumeDialog && (
+          <div className="modal-overlay">
+            <div className="modal-content resume-dialog">
+              <div className="modal-header">
+                <RotateCcw size={32} className="resume-icon" />
+                <h3>{t.foundSession}</h3>
+              </div>
+              
+              <div className="resume-info">
+                <p className="resume-description">{t.continueWhere}</p>
+                {lastActivity && (
+                  <div className="last-activity">
+                    <Clock size={16} />
+                    <span>{t.lastAttempted}: {new Date(lastActivity).toLocaleString()}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="modal-actions resume-actions">
+                <button className="btn start-new" onClick={() => handleResumeChoice(false)}>
+                  {t.startNew}
+                </button>
+                <button className="btn resume" onClick={() => handleResumeChoice(true)}>
+                  <RotateCcw size={18} />
+                  {t.resumeTest}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
