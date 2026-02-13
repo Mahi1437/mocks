@@ -273,9 +273,12 @@ export default function AdvancedSkillTest() {
     setLoading(true);
     try {
       const response = await axios.get(`${API}/employee-skill/questions`);
+      // Handle the API response format - questions come in a "questions" array
+      const questionsData = response.data.questions || response.data;
+      
       // Organize questions by section
       const questionsBySection = {};
-      response.data.forEach(q => {
+      questionsData.forEach(q => {
         if (!questionsBySection[q.section]) {
           questionsBySection[q.section] = [];
         }
