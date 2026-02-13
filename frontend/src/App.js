@@ -10,8 +10,8 @@ import {
   Award, Users, Target, CheckCircle, Mail, Phone, MapPin,
   ArrowRight, Zap, Shield, TrendingUp
 } from "lucide-react";
-import EmployeeSkillTest from "./EmployeeSkillTest";
 import AdvancedMockTest from "./components/AdvancedMockTest";
+import AdvancedSkillTest from "./components/AdvancedSkillTest";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
