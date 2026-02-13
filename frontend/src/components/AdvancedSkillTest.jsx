@@ -317,6 +317,73 @@ export default function AdvancedSkillTest() {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Save test session to backend
+  const saveTestSession = async () => {
+    if (!employee?._id) return;
+    
+    try {
+      await axios.post(`${API}/employee-skill/save-session`, {
+        employee_id: employee._id,
+        current_section: currentSection,
+        current_question: currentQuestion,
+        time_remaining: timeRemaining,
+        answers: selectedAnswers,
+        marked_for_review: markedForReview,
+        visited_questions: visitedQuestions
+      });
+      setSaveStatus("saved");
+      setTimeout(() => setSaveStatus(""), 2000);
+    } catch (e) {
+      console.error("Failed to save session:", e);
+    }
+  };
+
+  // Check for active session and restore
+  const checkAndRestoreSession = async (employeeId) => {
+    try {
+      const response = await axios.get(`${API}/employee-skill/get-session/${employeeId}`);
+      if (response.data.has_active_session && response.data.session) {
+        const session = response.data.session;
+        setHasActiveSession(true);
+        setLastActivity(session.last_activity);
+        return session;
+      }
+    } catch (e) {
+      console.log("No active session found");
+    }
+    return null;
+  };
+
+  // Restore session state
+  const restoreSession = async (session) => {
+    if (!session) return;
+    
+    setSelectedAnswers(session.answers || {});
+    setMarkedForReview(session.marked_for_review || {});
+    setVisitedQuestions(session.visited_questions || {});
+    setTimeRemaining(session.time_remaining || TEST_CONFIG.durationSeconds);
+    setCurrentSection(session.current_section || TEST_CONFIG.sections[0].id);
+    setCurrentQuestion(session.current_question || 0);
+  };
+
+  // Start fresh test (clear any existing session)
+  const startFreshTest = async () => {
+    if (employee?._id) {
+      try {
+        await axios.delete(`${API}/employee-skill/clear-session/${employee._id}`);
+      } catch (e) {
+        console.log("Could not clear session");
+      }
+    }
+    setSelectedAnswers({});
+    setMarkedForReview({});
+    setVisitedQuestions({});
+    setTimeRemaining(TEST_CONFIG.durationSeconds);
+    setCurrentSection(TEST_CONFIG.sections[0].id);
+    setCurrentQuestion(0);
+    setShowResumeDialog(false);
+  };
+
   // Fetch questions
   const fetchQuestions = async () => {
     setLoading(true);
