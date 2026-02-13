@@ -527,6 +527,7 @@
 .question-number {
   font-weight: 600;
   font-size: 0.95rem;
+  color: var(--text-primary);
 }
 
 .section-badge {
@@ -550,7 +551,7 @@
   border: 1px solid var(--border-color);
   background: var(--bg-secondary);
   border-radius: 8px;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
@@ -560,6 +561,7 @@
 .question-actions .action-btn:hover:not(:disabled) {
   border-color: var(--primary);
   color: var(--primary);
+  background: var(--hover-bg);
 }
 
 .question-actions .action-btn:disabled {
@@ -568,7 +570,7 @@
 }
 
 .question-actions .action-btn.marked {
-  background: rgba(139, 92, 246, 0.15);
+  background: rgba(139, 92, 246, 0.2);
   border-color: var(--purple);
   color: var(--purple);
 }
@@ -583,6 +585,7 @@
   flex: 1;
   padding: 24px;
   overflow-y: auto;
+  background: var(--bg-secondary);
 }
 
 .question-text {
@@ -590,6 +593,7 @@
   line-height: 1.8;
   margin-bottom: 28px;
   color: var(--text-primary);
+  font-weight: 500;
 }
 
 .options-container {
@@ -603,7 +607,7 @@
   align-items: center;
   gap: 16px;
   padding: 16px 20px;
-  background: var(--bg-tertiary);
+  background: var(--option-bg);
   border: 2px solid var(--border-color);
   border-radius: 12px;
   cursor: pointer;
