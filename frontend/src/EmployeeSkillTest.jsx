@@ -96,7 +96,7 @@ function RegisterPage({ language, setLanguage, setCurrentPage, setEmployeeId }) 
       <div className="register-container">
         <div className="register-form-section">
           <h2>{language === 'te' ? 'నమోదు చేయండి' : 'Register'}</h2>
-          <p className="subtitle">{language === 'te' ? 'ఉద్యోగి లాగిన్' : 'Employee Login'}</p>
+          <p className="subtitle">{language === 'te' ? 'కొత్త ఉద్యోగి నమోదు' : 'New Employee Registration'}</p>
           
           <form onSubmit={handleSubmit}>
             <div className="form-group">
@@ -143,19 +143,95 @@ function RegisterPage({ language, setLanguage, setCurrentPage, setEmployeeId }) 
             {error && <p className="error-msg">{error}</p>}
             
             <button type="submit" className="submit-btn" disabled={loading}>
-              {loading ? '...' : (language === 'te' ? 'న మోడు చేయండి' : 'Register')}
+              {loading ? '...' : (language === 'te' ? 'నమోదు చేయండి' : 'Register')}
             </button>
           </form>
           
-          <p className="login-link">
+          <button className="login-link-btn" onClick={() => setCurrentPage('employee-login')}>
             {language === 'te' ? 'ఇప్పటికే ఖాతా ఉందా? లాగిన్ చేయండి' : 'Already have an account? Login'}
-          </p>
+          </button>
         </div>
 
         <div className="register-info-section">
           <BookOpen size={48} />
           <h3>{language === 'te' ? 'ఉద్యోగి నైపుణ్య మూల్యాంకనం' : 'Employee Skill Assessment'}</h3>
           <p>{language === 'te' ? 'వృత్తి నైపుణ్యాలను అంచనా వేయండి' : 'Assess Professional Skills'}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Employee Login Page (for existing employees)
+function EmployeeLoginPage({ language, setLanguage, setCurrentPage, setEmployeeId }) {
+  const [mobile, setMobile] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      const response = await axios.post(`${API}/login`, { mobile });
+      if (response.data.success) {
+        setEmployeeId(response.data.employee_id);
+        setCurrentPage('test');
+      } else {
+        setError(response.data.message || (language === 'te' ? 'లాగిన్ విఫలమైంది' : 'Login failed'));
+      }
+    } catch (err) {
+      setError(language === 'te' ? 'మొబైల్ నంబర్ కనుగొనబడలేదు. దయచేసి నమోదు చేయండి.' : 'Mobile number not found. Please register.');
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="employee-register">
+      <header className="employee-header">
+        <button className="back-btn" onClick={() => setCurrentPage('landing')}>
+          <ChevronLeft size={20} />
+          {language === 'te' ? 'హోమ్ కు వెళ్ళండి' : 'Back to Home'}
+        </button>
+        <button className="lang-toggle" onClick={() => setLanguage(language === 'en' ? 'te' : 'en')}>
+          <Globe size={18} />
+          {language === 'en' ? 'English' : 'తెలుగు'}
+        </button>
+      </header>
+
+      <div className="register-container">
+        <div className="register-form-section">
+          <h2>{language === 'te' ? 'లాగిన్' : 'Login'}</h2>
+          <p className="subtitle">{language === 'te' ? 'ఉద్యోగి లాగిన్' : 'Employee Login'}</p>
+          
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>{language === 'te' ? 'మొబైల్ నంబర్' : 'Mobile Number'}</label>
+              <input 
+                type="tel" 
+                placeholder={language === 'te' ? 'మొబైల్ నంబర్ నమోదు చేయండి' : 'Enter your mobile number'}
+                value={mobile}
+                onChange={(e) => setMobile(e.target.value)}
+                required
+              />
+            </div>
+            
+            {error && <p className="error-msg">{error}</p>}
+            
+            <button type="submit" className="submit-btn" disabled={loading}>
+              {loading ? '...' : (language === 'te' ? 'లాగిన్' : 'Login')}
+            </button>
+          </form>
+          
+          <button className="login-link-btn" onClick={() => setCurrentPage('register')}>
+            {language === 'te' ? 'కొత్త ఖాతా? నమోదు చేయండి' : "Don't have an account? Register"}
+          </button>
+        </div>
+
+        <div className="register-info-section">
+          <User size={48} />
+          <h3>{language === 'te' ? 'ఉద్యోగి లాగిన్' : 'Employee Login'}</h3>
+          <p>{language === 'te' ? 'మీ మొబైల్ నంబర్‌తో లాగిన్ చేయండి' : 'Login with your mobile number'}</p>
         </div>
       </div>
     </div>
