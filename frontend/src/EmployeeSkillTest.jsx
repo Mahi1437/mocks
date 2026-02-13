@@ -331,6 +331,7 @@ function TestPage({ language, setLanguage, employeeId, setCurrentPage, setTestRe
   const [timeRemaining, setTimeRemaining] = useState(170 * 60); // 170 minutes
   const [showConfirm, setShowConfirm] = useState(false);
   const [saveStatus, setSaveStatus] = useState(''); // For showing save indicator
+  const [savedSections, setSavedSections] = useState({}); // Track which sections are saved
 
   useEffect(() => {
     fetchQuestionsAndProgress();
@@ -338,7 +339,7 @@ function TestPage({ language, setLanguage, employeeId, setCurrentPage, setTestRe
 
   useEffect(() => {
     if (timeRemaining <= 0) {
-      handleSubmit();
+      handleFinalSubmit();
       return;
     }
     const timer = setInterval(() => {
@@ -379,28 +380,9 @@ function TestPage({ language, setLanguage, employeeId, setCurrentPage, setTestRe
   const sectionQuestions = questions.filter(q => q.section === currentSection);
   const currentQuestion = sectionQuestions[currentQuestionIndex];
 
-  const handleAnswerSelect = async (optionIndex) => {
+  const handleAnswerSelect = (optionIndex) => {
     if (currentQuestion) {
-      // Update local state immediately
       setAnswers({...answers, [currentQuestion.id]: optionIndex});
-      
-      // Auto-save to backend
-      setSaveStatus('saving');
-      try {
-        await axios.post(`${API}/save-answer`, {
-          employee_id: employeeId,
-          question_id: currentQuestion.id,
-          selected_answer: optionIndex,
-          section: currentQuestion.section
-        });
-        setSaveStatus('saved');
-        // Clear status after 2 seconds
-        setTimeout(() => setSaveStatus(''), 2000);
-      } catch (err) {
-        console.error('Error saving answer:', err);
-        setSaveStatus('error');
-        setTimeout(() => setSaveStatus(''), 3000);
-      }
     }
   };
 
@@ -419,6 +401,80 @@ function TestPage({ language, setLanguage, employeeId, setCurrentPage, setTestRe
   const handleSectionChange = (sectionId) => {
     setCurrentSection(sectionId);
     setCurrentQuestionIndex(0);
+  };
+
+  // Save current section's answers
+  const handleSaveSection = async () => {
+    setSaveStatus('saving');
+    try {
+      // Save all answers for current section
+      const sectionAnswers = sectionQuestions.filter(q => answers[q.id] !== undefined);
+      
+      for (const q of sectionAnswers) {
+        await axios.post(`${API}/save-answer`, {
+          employee_id: employeeId,
+          question_id: q.id,
+          selected_answer: answers[q.id],
+          section: currentSection
+        });
+      }
+      
+      setSavedSections({...savedSections, [currentSection]: true});
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus(''), 2000);
+    } catch (err) {
+      console.error('Error saving section:', err);
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus(''), 3000);
+    }
+  };
+
+  // Check if all sections have answers
+  const getAnsweredCountForSection = (sectionId) => {
+    const sectionQs = questions.filter(q => q.section === sectionId);
+    return sectionQs.filter(q => answers[q.id] !== undefined).length;
+  };
+
+  const getTotalAnswered = () => {
+    return Object.keys(answers).length;
+  };
+
+  const allSectionsCompleted = () => {
+    return sections.every(section => {
+      const sectionQs = questions.filter(q => q.section === section.id);
+      const answered = sectionQs.filter(q => answers[q.id] !== undefined).length;
+      return answered === sectionQs.length;
+    });
+  };
+
+  // Final submit
+  const handleFinalSubmit = async () => {
+    try {
+      const answersList = Object.entries(answers).map(([qId, answer]) => ({
+        question_id: parseInt(qId),
+        selected_answer: answer
+      }));
+
+      const response = await axios.post(`${API}/submit`, {
+        employee_id: employeeId,
+        answers: answersList,
+        time_taken: (170 * 60) - timeRemaining
+      });
+
+      // Clear saved progress after successful submission
+      try {
+        await axios.delete(`${API}/clear-progress/${employeeId}`);
+      } catch (e) {
+        console.log('Could not clear progress');
+      }
+
+      setTestResult(response.data);
+      setCurrentPage('results');
+      setShowConfirm(false);
+    } catch (err) {
+      console.error('Error submitting test:', err);
+      alert(language === 'te' ? 'సమర్పించడంలో లోపం. మళ్ళీ ప్రయత్నించండి.' : 'Error submitting. Please try again.');
+    }
   };
 
   const handleSubmit = async () => {
