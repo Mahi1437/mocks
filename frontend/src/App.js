@@ -852,7 +852,7 @@ function MockTestPage({ darkMode, setDarkMode }) {
           </div>
 
           <div className="question-content">
-            <p className="question-text">{question?.question}</p>
+            <p className="question-text" style={{color: darkMode ? '#f1f5f9' : '#1e293b'}}>{question?.question}</p>
             <div className="options-grid">
               {question && Object.entries(question.options).map(([key, value]) => (
                 <button
@@ -862,7 +862,7 @@ function MockTestPage({ darkMode, setDarkMode }) {
                   data-testid={`option-${key}`}
                 >
                   <span className="option-key">{key}</span>
-                  <span className="option-value">{value}</span>
+                  <span className="option-value" style={{color: darkMode ? '#f1f5f9' : '#1e293b'}}>{value}</span>
                   {selectedAnswer === key && <Check className="check-icon" size={18} />}
                 </button>
               ))}
