@@ -155,7 +155,14 @@ export default function AdvancedSkillTest() {
       warning: "హెచ్చరిక",
       confirmSubmit: "మీరు పరీక్షను సమర్పించాలనుకుంటున్నారా?",
       cancel: "రద్దు చేయి",
-      confirm: "నిర్ధారించు"
+      confirm: "నిర్ధారించు",
+      resumeTest: "పరీక్ష కొనసాగించు",
+      startNew: "కొత్త పరీక్ష ప్రారంభించు",
+      foundSession: "మీకు అసంపూర్ణ పరీక్ష ఉంది",
+      lastAttempted: "చివరి ప్రయత్నం",
+      questionsAnswered: "సమాధానాలు ఇచ్చిన ప్రశ్నలు",
+      timeLeft: "మిగిలిన సమయం",
+      continueWhere: "మీరు ఆగిన చోట నుండి కొనసాగించాలనుకుంటున్నారా?"
     },
     english: {
       title: "Employee Skill Assessment",
