@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Routes, Route, useNavigate, useParams, Link } from "react-router-dom";
 import "@/App.css";
+import "./EmployeeSkillTest.css";
 import axios from "axios";
 import { 
   ChevronLeft, ChevronRight, Check, X, RotateCcw, 
@@ -9,6 +10,7 @@ import {
   Award, Users, Target, CheckCircle, Mail, Phone, MapPin,
   ArrowRight, Zap, Shield, TrendingUp
 } from "lucide-react";
+import EmployeeSkillTest from "./EmployeeSkillTest";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
