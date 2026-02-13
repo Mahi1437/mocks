@@ -540,11 +540,14 @@ function ResultsPage({ language, setLanguage, testResult, setCurrentPage }) {
   );
 }
 
-// Admin Dashboard
+// Admin Dashboard with Analytics
 function AdminDashboard({ language, setLanguage, setCurrentPage, setIsAdmin }) {
   const [results, setResults] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [viewMode, setViewMode] = useState('overview'); // 'overview', 'employees', 'analytics'
+  const [suggestionText, setSuggestionText] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -568,6 +571,51 @@ function AdminDashboard({ language, setLanguage, setCurrentPage, setIsAdmin }) {
   const handleLogout = () => {
     setIsAdmin(false);
     setCurrentPage('landing');
+  };
+
+  const handleAddSuggestion = async (employeeId) => {
+    try {
+      await axios.post(`${API}/admin/suggestion`, {
+        employee_id: employeeId,
+        suggestion: suggestionText
+      });
+      setSuggestionText('');
+      fetchData();
+      alert(language === 'te' ? 'సూచన జోడించబడింది' : 'Suggestion added successfully');
+    } catch (err) {
+      console.error('Error adding suggestion:', err);
+    }
+  };
+
+  // Calculate analytics
+  const analytics = {
+    totalEmployees: employees.length,
+    totalTests: results.length,
+    avgScore: results.length > 0 ? (results.reduce((sum, r) => sum + r.percentage, 0) / results.length).toFixed(1) : 0,
+    highPerformers: results.filter(r => r.percentage >= 80).length,
+    mediumPerformers: results.filter(r => r.percentage >= 50 && r.percentage < 80).length,
+    lowPerformers: results.filter(r => r.percentage < 50).length,
+    sectionStats: {}
+  };
+
+  // Calculate section-wise stats
+  results.forEach(result => {
+    if (result.sections) {
+      Object.entries(result.sections).forEach(([sectionId, data]) => {
+        if (!analytics.sectionStats[sectionId]) {
+          analytics.sectionStats[sectionId] = { name: data.name, totalScore: 0, count: 0 };
+        }
+        analytics.sectionStats[sectionId].totalScore += data.percentage;
+        analytics.sectionStats[sectionId].count += 1;
+      });
+    }
+  });
+
+  const getSkillLevel = (percentage) => {
+    if (percentage >= 80) return { level: language === 'te' ? 'అత్యుత్తమం' : 'Excellent', color: '#10b981' };
+    if (percentage >= 60) return { level: language === 'te' ? 'మంచి' : 'Good', color: '#3b82f6' };
+    if (percentage >= 40) return { level: language === 'te' ? 'సగటు' : 'Average', color: '#f59e0b' };
+    return { level: language === 'te' ? 'మెరుగుపరచాలి' : 'Needs Improvement', color: '#ef4444' };
   };
 
   if (loading) {
@@ -597,63 +645,305 @@ function AdminDashboard({ language, setLanguage, setCurrentPage, setIsAdmin }) {
         </div>
       </header>
 
-      <div className="dashboard-content">
-        <div className="stats-cards">
-          <div className="stat-card">
-            <Users size={32} />
-            <div>
-              <span className="stat-value">{employees.length}</span>
-              <span className="stat-label">{language === 'te' ? 'మొత్తం ఉద్యోగులు' : 'Total Employees'}</span>
-            </div>
-          </div>
-          <div className="stat-card">
-            <Award size={32} />
-            <div>
-              <span className="stat-value">{results.length}</span>
-              <span className="stat-label">{language === 'te' ? 'పరీక్షలు పూర్తయినవి' : 'Tests Completed'}</span>
-            </div>
-          </div>
-          <div className="stat-card">
-            <BookOpen size={32} />
-            <div>
-              <span className="stat-value">
-                {results.length > 0 ? (results.reduce((sum, r) => sum + r.percentage, 0) / results.length).toFixed(1) : 0}%
-              </span>
-              <span className="stat-label">{language === 'te' ? 'సగటు స్కోర్' : 'Average Score'}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="results-section">
-          <h3>{language === 'te' ? 'పరీక్ష ఫలితాలు' : 'Test Results'}</h3>
-          {results.length === 0 ? (
-            <p className="no-data">{language === 'te' ? 'ఇంకా ఫలితాలు లేవు' : 'No results yet'}</p>
-          ) : (
-            <table className="results-table-full">
-              <thead>
-                <tr>
-                  <th>{language === 'te' ? 'ఉద్యోగి పేరు' : 'Employee Name'}</th>
-                  <th>{language === 'te' ? 'స్కోర్' : 'Score'}</th>
-                  <th>{language === 'te' ? 'సమాధానం ఇచ్చినవి' : 'Attempted'}</th>
-                  <th>{language === 'te' ? 'సరైనవి' : 'Correct'}</th>
-                  <th>{language === 'te' ? 'తేదీ' : 'Date'}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {results.map(result => (
-                  <tr key={result.id}>
-                    <td>{result.employee_name}</td>
-                    <td><span className="score-badge">{result.percentage}%</span></td>
-                    <td>{result.total_attempted}/{result.total_questions}</td>
-                    <td>{result.total_correct}</td>
-                    <td>{new Date(result.timestamp).toLocaleDateString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+      {/* Navigation Tabs */}
+      <div className="admin-tabs">
+        <button 
+          className={`tab-btn ${viewMode === 'overview' ? 'active' : ''}`}
+          onClick={() => setViewMode('overview')}
+        >
+          {language === 'te' ? 'సారాంశం' : 'Overview'}
+        </button>
+        <button 
+          className={`tab-btn ${viewMode === 'employees' ? 'active' : ''}`}
+          onClick={() => setViewMode('employees')}
+        >
+          {language === 'te' ? 'ఉద్యోగులు' : 'Employees'}
+        </button>
+        <button 
+          className={`tab-btn ${viewMode === 'analytics' ? 'active' : ''}`}
+          onClick={() => setViewMode('analytics')}
+        >
+          {language === 'te' ? 'విశ్లేషణ' : 'Analytics'}
+        </button>
       </div>
+
+      <div className="dashboard-content">
+        {/* Overview Mode */}
+        {viewMode === 'overview' && (
+          <>
+            <div className="stats-cards">
+              <div className="stat-card">
+                <Users size={32} />
+                <div>
+                  <span className="stat-value">{analytics.totalEmployees}</span>
+                  <span className="stat-label">{language === 'te' ? 'మొత్తం ఉద్యోగులు' : 'Total Employees'}</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <Award size={32} />
+                <div>
+                  <span className="stat-value">{analytics.totalTests}</span>
+                  <span className="stat-label">{language === 'te' ? 'పరీక్షలు పూర్తయినవి' : 'Tests Completed'}</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <BookOpen size={32} />
+                <div>
+                  <span className="stat-value">{analytics.avgScore}%</span>
+                  <span className="stat-label">{language === 'te' ? 'సగటు స్కోర్' : 'Average Score'}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Performance Distribution */}
+            <div className="performance-section">
+              <h3>{language === 'te' ? 'పనితీరు పంపిణీ' : 'Performance Distribution'}</h3>
+              <div className="performance-bars">
+                <div className="perf-bar">
+                  <div className="perf-label">
+                    <span className="dot" style={{background: '#10b981'}}></span>
+                    {language === 'te' ? 'అత్యుత్తమం (≥80%)' : 'Excellent (≥80%)'}
+                  </div>
+                  <div className="perf-value">{analytics.highPerformers}</div>
+                </div>
+                <div className="perf-bar">
+                  <div className="perf-label">
+                    <span className="dot" style={{background: '#f59e0b'}}></span>
+                    {language === 'te' ? 'సగటు (50-79%)' : 'Average (50-79%)'}
+                  </div>
+                  <div className="perf-value">{analytics.mediumPerformers}</div>
+                </div>
+                <div className="perf-bar">
+                  <div className="perf-label">
+                    <span className="dot" style={{background: '#ef4444'}}></span>
+                    {language === 'te' ? 'మెరుగుపరచాలి (<50%)' : 'Needs Improvement (<50%)'}
+                  </div>
+                  <div className="perf-value">{analytics.lowPerformers}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Recent Results */}
+            <div className="results-section">
+              <h3>{language === 'te' ? 'ఇటీవలి పరీక్ష ఫలితాలు' : 'Recent Test Results'}</h3>
+              {results.length === 0 ? (
+                <p className="no-data">{language === 'te' ? 'ఇంకా ఫలితాలు లేవు' : 'No results yet'}</p>
+              ) : (
+                <table className="results-table-full">
+                  <thead>
+                    <tr>
+                      <th>{language === 'te' ? 'ఉద్యోగి పేరు' : 'Employee Name'}</th>
+                      <th>{language === 'te' ? 'స్కోర్' : 'Score'}</th>
+                      <th>{language === 'te' ? 'స్థాయి' : 'Level'}</th>
+                      <th>{language === 'te' ? 'తేదీ' : 'Date'}</th>
+                      <th>{language === 'te' ? 'చర్యలు' : 'Actions'}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {results.slice(0, 10).map(result => {
+                      const skillLevel = getSkillLevel(result.percentage);
+                      return (
+                        <tr key={result.id}>
+                          <td>{result.employee_name}</td>
+                          <td><span className="score-badge">{result.percentage}%</span></td>
+                          <td><span className="level-badge" style={{background: skillLevel.color}}>{skillLevel.level}</span></td>
+                          <td>{new Date(result.timestamp).toLocaleDateString()}</td>
+                          <td>
+                            <button className="view-btn" onClick={() => setSelectedEmployee(result)}>
+                              {language === 'te' ? 'వివరాలు' : 'Details'}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Employees Mode */}
+        {viewMode === 'employees' && (
+          <div className="employees-section">
+            <h3>{language === 'te' ? 'నమోదైన ఉద్యోగులు' : 'Registered Employees'}</h3>
+            {employees.length === 0 ? (
+              <p className="no-data">{language === 'te' ? 'ఇంకా ఉద్యోగులు లేరు' : 'No employees yet'}</p>
+            ) : (
+              <table className="results-table-full">
+                <thead>
+                  <tr>
+                    <th>{language === 'te' ? 'పేరు' : 'Name'}</th>
+                    <th>{language === 'te' ? 'హోదా' : 'Designation'}</th>
+                    <th>{language === 'te' ? 'మొబైల్' : 'Mobile'}</th>
+                    <th>{language === 'te' ? 'ఇమెయిల్' : 'Email'}</th>
+                    <th>{language === 'te' ? 'నమోదు తేదీ' : 'Registered'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {employees.map(emp => (
+                    <tr key={emp.id}>
+                      <td>{emp.name}</td>
+                      <td>{emp.designation || '-'}</td>
+                      <td>{emp.mobile}</td>
+                      <td>{emp.email}</td>
+                      <td>{new Date(emp.created_at).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        )}
+
+        {/* Analytics Mode */}
+        {viewMode === 'analytics' && (
+          <div className="analytics-section">
+            <h3>{language === 'te' ? 'నైపుణ్య విశ్లేషణ' : 'Skill Analysis'}</h3>
+            
+            {/* Section-wise Performance */}
+            <div className="section-analytics">
+              <h4>{language === 'te' ? 'విభాగాల వారీగా సగటు పనితీరు' : 'Section-wise Average Performance'}</h4>
+              <div className="section-bars">
+                {Object.entries(analytics.sectionStats).map(([sectionId, data]) => {
+                  const avgPercentage = data.count > 0 ? (data.totalScore / data.count).toFixed(1) : 0;
+                  const skillLevel = getSkillLevel(parseFloat(avgPercentage));
+                  return (
+                    <div key={sectionId} className="section-bar-item">
+                      <div className="section-bar-header">
+                        <span className="section-bar-name">{data.name}</span>
+                        <span className="section-bar-value" style={{color: skillLevel.color}}>{avgPercentage}%</span>
+                      </div>
+                      <div className="section-bar-bg">
+                        <div 
+                          className="section-bar-fill" 
+                          style={{width: `${avgPercentage}%`, background: skillLevel.color}}
+                        ></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Skill Insights */}
+            <div className="skill-insights">
+              <h4>{language === 'te' ? 'నైపుణ్య అంతర్దృష్టులు' : 'Skill Insights'}</h4>
+              <div className="insights-grid">
+                <div className="insight-card">
+                  <div className="insight-icon" style={{background: '#10b981'}}>
+                    <Check size={24} />
+                  </div>
+                  <div className="insight-content">
+                    <h5>{language === 'te' ? 'బలమైన విభాగాలు' : 'Strong Areas'}</h5>
+                    <p>
+                      {Object.entries(analytics.sectionStats)
+                        .filter(([_, data]) => data.count > 0 && (data.totalScore / data.count) >= 60)
+                        .map(([_, data]) => data.name)
+                        .join(', ') || (language === 'te' ? 'డేటా లేదు' : 'No data')}
+                    </p>
+                  </div>
+                </div>
+                <div className="insight-card">
+                  <div className="insight-icon" style={{background: '#ef4444'}}>
+                    <X size={24} />
+                  </div>
+                  <div className="insight-content">
+                    <h5>{language === 'te' ? 'మెరుగుపరచాల్సిన విభాగాలు' : 'Areas to Improve'}</h5>
+                    <p>
+                      {Object.entries(analytics.sectionStats)
+                        .filter(([_, data]) => data.count > 0 && (data.totalScore / data.count) < 60)
+                        .map(([_, data]) => data.name)
+                        .join(', ') || (language === 'te' ? 'అన్నీ మంచివి!' : 'All good!')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Training Recommendations */}
+            <div className="recommendations">
+              <h4>{language === 'te' ? 'శిక్షణ సిఫార్సులు' : 'Training Recommendations'}</h4>
+              <div className="rec-list">
+                {analytics.lowPerformers > 0 && (
+                  <div className="rec-item">
+                    <span className="rec-priority high">{language === 'te' ? 'అత్యవసరం' : 'High Priority'}</span>
+                    <p>{analytics.lowPerformers} {language === 'te' ? 'ఉద్యోగులకు అదనపు శిక్షణ అవసరం' : 'employees need additional training'}</p>
+                  </div>
+                )}
+                {Object.entries(analytics.sectionStats)
+                  .filter(([_, data]) => data.count > 0 && (data.totalScore / data.count) < 50)
+                  .map(([sectionId, data]) => (
+                    <div key={sectionId} className="rec-item">
+                      <span className="rec-priority medium">{language === 'te' ? 'మధ్యస్థం' : 'Medium'}</span>
+                      <p>{data.name} {language === 'te' ? 'విభాగంలో నైపుణ్యాలు మెరుగుపరచాలి' : 'section needs skill improvement'}</p>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Employee Detail Modal */}
+      {selectedEmployee && (
+        <div className="modal-overlay" onClick={() => setSelectedEmployee(null)}>
+          <div className="modal-content large" onClick={e => e.stopPropagation()}>
+            <h3>{selectedEmployee.employee_name} - {language === 'te' ? 'వివరమైన నివేదిక' : 'Detailed Report'}</h3>
+            
+            <div className="detail-score">
+              <div className="score-circle" style={{background: getSkillLevel(selectedEmployee.percentage).color}}>
+                <span className="score-value">{selectedEmployee.percentage}%</span>
+              </div>
+              <div className="score-info">
+                <p><strong>{language === 'te' ? 'స్థాయి' : 'Level'}:</strong> {getSkillLevel(selectedEmployee.percentage).level}</p>
+                <p><strong>{language === 'te' ? 'మొత్తం ప్రశ్నలు' : 'Total Questions'}:</strong> {selectedEmployee.total_questions}</p>
+                <p><strong>{language === 'te' ? 'సరైన సమాధానాలు' : 'Correct Answers'}:</strong> {selectedEmployee.total_correct}</p>
+                <p><strong>{language === 'te' ? 'సమయం' : 'Time Taken'}:</strong> {Math.floor(selectedEmployee.time_taken / 60)} {language === 'te' ? 'నిమిషాలు' : 'minutes'}</p>
+              </div>
+            </div>
+
+            {/* Section Breakdown */}
+            <div className="section-breakdown">
+              <h4>{language === 'te' ? 'విభాగాల వారీగా పనితీరు' : 'Section-wise Performance'}</h4>
+              {selectedEmployee.sections && Object.entries(selectedEmployee.sections).map(([sectionId, data]) => {
+                const skillLevel = getSkillLevel(data.percentage);
+                return (
+                  <div key={sectionId} className="section-detail">
+                    <div className="section-detail-header">
+                      <span>{data.name}</span>
+                      <span style={{color: skillLevel.color}}>{data.percentage.toFixed(1)}%</span>
+                    </div>
+                    <div className="section-bar-bg">
+                      <div className="section-bar-fill" style={{width: `${data.percentage}%`, background: skillLevel.color}}></div>
+                    </div>
+                    <div className="section-stats">
+                      <span>{language === 'te' ? 'సరైనవి' : 'Correct'}: {data.correct}/{data.total}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Add Suggestion */}
+            <div className="suggestion-section">
+              <h4>{language === 'te' ? 'సూచన/గమనిక జోడించండి' : 'Add Suggestion/Note'}</h4>
+              <textarea
+                value={suggestionText}
+                onChange={(e) => setSuggestionText(e.target.value)}
+                placeholder={language === 'te' ? 'ఈ ఉద్యోగికి సూచన లేదా గమనిక రాయండి...' : 'Write a suggestion or note for this employee...'}
+              ></textarea>
+              <button className="add-suggestion-btn" onClick={() => handleAddSuggestion(selectedEmployee.employee_id)}>
+                {language === 'te' ? 'సూచన జోడించు' : 'Add Suggestion'}
+              </button>
+            </div>
+
+            <button className="close-modal-btn" onClick={() => setSelectedEmployee(null)}>
+              {language === 'te' ? 'మూసివేయి' : 'Close'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
