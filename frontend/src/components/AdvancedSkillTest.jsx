@@ -627,6 +627,11 @@ export default function AdvancedSkillTest() {
   const handleSubmitQuiz = async () => {
     recordQuestionTime();
     
+    // Stop auto-save timer
+    if (saveSessionRef.current) {
+      clearInterval(saveSessionRef.current);
+    }
+    
     try {
       const answers = Object.entries(selectedAnswers).map(([key, answer]) => {
         const [section, qId] = key.split('-');
@@ -650,6 +655,10 @@ export default function AdvancedSkillTest() {
         accuracy: response.data.sections.reduce((sum, s) => sum + s.correct, 0) / 
                   Math.max(1, response.data.sections.reduce((sum, s) => sum + s.attempted, 0)) * 100
       };
+      
+      // Clear session states
+      setHasActiveSession(false);
+      sessionStorage.removeItem('pendingSession');
       
       setQuizResult(enhancedResult);
       setCurrentPage("results");
