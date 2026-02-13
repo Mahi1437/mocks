@@ -588,12 +588,13 @@ function TestPage({ language, setLanguage, employeeId, setCurrentPage, setTestRe
         <div className="question-palette">
           <h3>{language === 'te' ? 'ప్రశ్న పాలెట్' : 'Question Palette'}</h3>
           <p className="answered-count">
-            {language === 'te' ? 'సమాధానం ఇచ్చినవి' : 'Answered'}: {Object.keys(answers).length}/{questions.length}
+            {language === 'te' ? 'సమాధానం ఇచ్చినవి' : 'Answered'}: {getTotalAnswered()}/{questions.length}
           </p>
           
           <div className="palette-legend">
             <div className="legend-item"><span className="dot answered"></span> {language === 'te' ? 'సమాధానం ఇచ్చినవి' : 'Answered'}</div>
             <div className="legend-item"><span className="dot not-answered"></span> {language === 'te' ? 'సమాధానం ఇవ్వనివి' : 'Not Answered'}</div>
+            <div className="legend-item"><span className="dot saved"></span> {language === 'te' ? 'సేవ్ అయింది' : 'Saved'}</div>
           </div>
 
           <div className="palette-questions">
@@ -608,9 +609,36 @@ function TestPage({ language, setLanguage, employeeId, setCurrentPage, setTestRe
             ))}
           </div>
 
-          <button className="submit-test-btn" onClick={() => setShowConfirm(true)}>
+          {/* Section Progress */}
+          <div className="section-progress-info">
+            <p>{language === 'te' ? 'ఈ విభాగం' : 'This Section'}: {getAnsweredCount(currentSection)}/{sectionQuestions.length}</p>
+            {savedSections[currentSection] && (
+              <span className="saved-badge">✓ {language === 'te' ? 'సేవ్ అయింది' : 'Saved'}</span>
+            )}
+          </div>
+
+          {/* Save Section Button */}
+          <button 
+            className={`save-section-btn ${saveStatus === 'saving' ? 'saving' : ''}`}
+            onClick={handleSaveSection}
+            disabled={saveStatus === 'saving'}
+          >
+            {saveStatus === 'saving' ? (language === 'te' ? 'సేవ్ అవుతోంది...' : 'Saving...') : 
+             saveStatus === 'saved' ? (language === 'te' ? '✓ సేవ్ అయింది' : '✓ Saved') :
+             (language === 'te' ? 'విభాగం సేవ్ చేయండి' : 'Save Section')}
+          </button>
+
+          {/* Submit Test Button - only enabled when all sections have at least some answers */}
+          <button 
+            className="submit-test-btn" 
+            onClick={() => setShowConfirm(true)}
+          >
             {language === 'te' ? 'పరీక్ష సమర్పించు' : 'Submit Test'}
           </button>
+
+          {saveStatus === 'error' && (
+            <p className="save-error">{language === 'te' ? 'సేవ్ చేయడంలో లోపం' : 'Error saving'}</p>
+          )}
         </div>
       </div>
 
@@ -620,14 +648,14 @@ function TestPage({ language, setLanguage, employeeId, setCurrentPage, setTestRe
             <h3>{language === 'te' ? 'పరీక్ష సమర్పించాలా?' : 'Submit Test?'}</h3>
             <div className="modal-stats">
               <p>{language === 'te' ? 'మొత్తం ప్రశ్నలు' : 'Total Questions'}: {questions.length}</p>
-              <p>{language === 'te' ? 'సమాధానం ఇచ్చినవి' : 'Answered'}: {Object.keys(answers).length}</p>
-              <p>{language === 'te' ? 'సమాధానం ఇవ్వనివి' : 'Unanswered'}: {questions.length - Object.keys(answers).length}</p>
+              <p>{language === 'te' ? 'సమాధానం ఇచ్చినవి' : 'Answered'}: {getTotalAnswered()}</p>
+              <p>{language === 'te' ? 'సమాధానం ఇవ్వనివి' : 'Unanswered'}: {questions.length - getTotalAnswered()}</p>
             </div>
             <div className="modal-actions">
               <button className="cancel-btn" onClick={() => setShowConfirm(false)}>
                 {language === 'te' ? 'రద్దు' : 'Cancel'}
               </button>
-              <button className="confirm-btn" onClick={handleSubmit}>
+              <button className="confirm-btn" onClick={handleFinalSubmit}>
                 {language === 'te' ? 'సమర్పించు' : 'Submit'}
               </button>
             </div>
