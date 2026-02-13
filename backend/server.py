@@ -394,6 +394,92 @@ async def get_correct_answers():
         "mathematics": {q["id"]: q["correct_answer"] for q in MATHEMATICS_QUESTIONS}
     }
 
+# ============== SKILL TEST API ENDPOINTS ==============
+
+@api_router.get("/skilltest/sections")
+async def get_skilltest_sections():
+    return {
+        "sections": [
+            {"id": "aptitude", "name": "Aptitude", "questions": 20, "marks_per_question": 3, "negative_marking": -1},
+            {"id": "reasoning", "name": "Reasoning", "questions": 15, "marks_per_question": 3, "negative_marking": -1},
+            {"id": "verbal", "name": "Verbal Ability", "questions": 15, "marks_per_question": 3, "negative_marking": -1}
+        ],
+        "total_questions": 50,
+        "max_marks": 150,
+        "duration_minutes": 60
+    }
+
+@api_router.get("/skilltest/all-questions")
+async def get_skilltest_all_questions():
+    return {
+        "aptitude": [QuizQuestion(id=q["id"], question=q["question"], options=q["options"], hint=q["hint"]) for q in APTITUDE_QUESTIONS],
+        "reasoning": [QuizQuestion(id=q["id"], question=q["question"], options=q["options"], hint=q["hint"]) for q in REASONING_QUESTIONS],
+        "verbal": [QuizQuestion(id=q["id"], question=q["question"], options=q["options"], hint=q["hint"]) for q in VERBAL_QUESTIONS]
+    }
+
+@api_router.post("/skilltest/submit")
+async def submit_skilltest(request: SubmitQuizRequest):
+    questions_map = {
+        "aptitude": APTITUDE_QUESTIONS,
+        "reasoning": REASONING_QUESTIONS,
+        "verbal": VERBAL_QUESTIONS
+    }
+    
+    section_results = []
+    total_marks = 0
+    
+    for section_id, questions in questions_map.items():
+        section_answers = [a for a in request.answers if a.section == section_id]
+        
+        attempted = 0
+        correct = 0
+        wrong = 0
+        
+        for q in questions:
+            answer = next((a for a in section_answers if a.question_id == q["id"]), None)
+            if answer and answer.selected_answer:
+                attempted += 1
+                if answer.selected_answer == q["correct_answer"]:
+                    correct += 1
+                else:
+                    wrong += 1
+        
+        section_marks = (correct * 3) + (wrong * -1)
+        total_marks += section_marks
+        
+        section_name = {
+            "aptitude": "Aptitude",
+            "reasoning": "Reasoning",
+            "verbal": "Verbal Ability"
+        }[section_id]
+        
+        section_results.append(SectionResult(
+            section_name=section_name,
+            total_questions=len(questions),
+            attempted=attempted,
+            correct=correct,
+            wrong=wrong,
+            marks=section_marks
+        ))
+    
+    max_marks = 150
+    percentage = (total_marks / max_marks) * 100 if max_marks > 0 else 0
+    
+    result = QuizResult(
+        sections=section_results,
+        total_marks=total_marks,
+        max_marks=max_marks,
+        percentage=percentage,
+        time_taken=request.time_taken
+    )
+    
+    result_dict = result.model_dump()
+    result_dict['timestamp'] = result_dict['timestamp'].isoformat()
+    result_dict['test_type'] = 'skilltest'
+    await db.skilltest_results.insert_one(result_dict)
+    
+    return result
+
 app.include_router(api_router)
 
 app.add_middleware(
