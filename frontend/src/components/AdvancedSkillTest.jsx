@@ -447,7 +447,25 @@ export default function AdvancedSkillTest() {
     
     try {
       const response = await axios.post(`${API}/employee-skill/login`, { mobile: loginMobile });
+      if (response.data.success === false) {
+        setError(response.data.message || "Login failed");
+        setLoading(false);
+        return;
+      }
+      
       setEmployee(response.data);
+      
+      // Check if user has an active test session
+      if (response.data.has_active_session) {
+        const session = await checkAndRestoreSession(response.data._id);
+        if (session) {
+          setLastActivity(session.last_activity);
+          setShowResumeDialog(true);
+          // Store session temporarily for resume
+          sessionStorage.setItem('pendingSession', JSON.stringify(session));
+        }
+      }
+      
       setCurrentPage("instructions");
     } catch (e) {
       setError(e.response?.data?.detail || "Login failed");
