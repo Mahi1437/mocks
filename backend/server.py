@@ -474,7 +474,8 @@ class EmployeeLogin(BaseModel):
 async def login_employee(data: EmployeeLogin):
     employee = await db.employees.find_one({"mobile": data.mobile}, {"_id": 0})
     if employee:
-        return {"success": True, "employee_id": employee["id"], "employee_name": employee["name"], "message": "Login successful"}
+        # Return full employee data with _id field for frontend compatibility
+        return {"_id": employee["id"], "name": employee["name"], "designation": employee["designation"], "mobile": employee["mobile"], "email": employee.get("email", "")}
     return {"success": False, "message": "Mobile number not found. Please register."}
 
 # Auto-save answer model
