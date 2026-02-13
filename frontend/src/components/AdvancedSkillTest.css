@@ -33,15 +33,15 @@
   --bg-primary: #0c1929;
   --bg-secondary: #1e293b;
   --bg-tertiary: #334155;
-  --text-primary: #f8fafc;
+  --text-primary: #ffffff;
   --text-secondary: #e2e8f0;
   --text-muted: #94a3b8;
   --border-color: #475569;
   --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   --hover-bg: rgba(255, 255, 255, 0.1);
-  --option-bg: #1e293b;
+  --option-bg: #334155;
   --option-hover: #475569;
-  --btn-text: #f8fafc;
+  --btn-text: #ffffff;
 }
 
 .skill-test-container {
