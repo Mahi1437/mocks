@@ -485,6 +485,16 @@ class SaveAnswerRequest(BaseModel):
     selected_answer: int
     section: str
 
+# Test Session model for tracking ongoing tests
+class TestSessionUpdate(BaseModel):
+    employee_id: str
+    current_section: str
+    current_question: int
+    time_remaining: int
+    answers: dict  # {question_key: answer_index}
+    marked_for_review: dict  # {question_key: bool}
+    visited_questions: dict  # {question_key: bool}
+
 @api_router.post("/employee-skill/save-answer")
 async def save_answer(data: SaveAnswerRequest):
     """Auto-save individual answer when employee selects an option"""
@@ -501,6 +511,62 @@ async def save_answer(data: SaveAnswerRequest):
         upsert=True
     )
     return {"success": True, "message": "Answer saved"}
+
+@api_router.post("/employee-skill/save-session")
+async def save_test_session(data: TestSessionUpdate):
+    """Save complete test session state for resuming later"""
+    session_data = {
+        "employee_id": data.employee_id,
+        "current_section": data.current_section,
+        "current_question": data.current_question,
+        "time_remaining": data.time_remaining,
+        "answers": data.answers,
+        "marked_for_review": data.marked_for_review,
+        "visited_questions": data.visited_questions,
+        "last_activity": datetime.now(timezone.utc).isoformat(),
+        "is_active": True
+    }
+    
+    # Upsert - update existing session or create new one
+    await db.employee_test_sessions.update_one(
+        {"employee_id": data.employee_id},
+        {"$set": session_data},
+        upsert=True
+    )
+    
+    # Also update last login activity
+    await db.employees.update_one(
+        {"id": data.employee_id},
+        {"$set": {"last_activity": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"success": True, "message": "Session saved", "timestamp": session_data["last_activity"]}
+
+@api_router.get("/employee-skill/get-session/{employee_id}")
+async def get_test_session(employee_id: str):
+    """Get saved test session for an employee to resume"""
+    session = await db.employee_test_sessions.find_one(
+        {"employee_id": employee_id, "is_active": True},
+        {"_id": 0}
+    )
+    
+    if session:
+        return {
+            "success": True,
+            "has_active_session": True,
+            "session": session
+        }
+    
+    return {"success": True, "has_active_session": False, "session": None}
+
+@api_router.delete("/employee-skill/clear-session/{employee_id}")
+async def clear_test_session(employee_id: str):
+    """Mark test session as inactive after submission"""
+    await db.employee_test_sessions.update_one(
+        {"employee_id": employee_id},
+        {"$set": {"is_active": False, "completed_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    return {"success": True, "message": "Session cleared"}
 
 @api_router.get("/employee-skill/get-progress/{employee_id}")
 async def get_progress(employee_id: str):
