@@ -580,6 +580,24 @@ async def submit_employee_test(request: EmployeeSubmitRequest):
     
     return result
 
+@api_router.get("/employee-skill/admin/stats")
+async def get_admin_stats():
+    total_employees = await db.employees.count_documents({})
+    total_tests = await db.employee_test_results.count_documents({})
+    
+    # Calculate average score
+    pipeline = [
+        {"$group": {"_id": None, "avgScore": {"$avg": "$percentage"}}}
+    ]
+    avg_result = await db.employee_test_results.aggregate(pipeline).to_list(1)
+    avg_score = avg_result[0]["avgScore"] if avg_result else 0
+    
+    return {
+        "total_employees": total_employees,
+        "total_tests": total_tests,
+        "average_score": round(avg_score, 1) if avg_score else 0
+    }
+
 @api_router.get("/employee-skill/admin/results")
 async def get_all_results():
     results = await db.employee_test_results.find({}, {"_id": 0}).to_list(1000)
