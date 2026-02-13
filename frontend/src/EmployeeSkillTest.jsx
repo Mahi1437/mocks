@@ -477,32 +477,14 @@ function TestPage({ language, setLanguage, employeeId, setCurrentPage, setTestRe
     }
   };
 
-  const handleSubmit = async () => {
-    try {
-      const answersList = Object.entries(answers).map(([qId, answer]) => ({
-        question_id: parseInt(qId),
-        selected_answer: answer
-      }));
-
-      const response = await axios.post(`${API}/submit`, {
-        employee_id: employeeId,
-        answers: answersList,
-        time_taken: (170 * 60) - timeRemaining
-      });
-
-      // Clear saved progress after successful submission
-      await axios.delete(`${API}/clear-progress/${employeeId}`);
-
-      setTestResult(response.data);
-      setCurrentPage('results');
-    } catch (err) {
-      console.error('Error submitting test:', err);
-    }
-  };
-
   const getAnsweredCount = (sectionId) => {
     const sectionQs = questions.filter(q => q.section === sectionId);
     return sectionQs.filter(q => answers[q.id] !== undefined).length;
+  };
+
+  // Check if current section is complete
+  const isSectionComplete = () => {
+    return getAnsweredCount(currentSection) === sectionQuestions.length;
   };
 
   if (loading) {
