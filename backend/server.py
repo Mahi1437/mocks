@@ -474,8 +474,28 @@ class EmployeeLogin(BaseModel):
 async def login_employee(data: EmployeeLogin):
     employee = await db.employees.find_one({"mobile": data.mobile}, {"_id": 0})
     if employee:
-        # Return full employee data with _id field for frontend compatibility
-        return {"_id": employee["id"], "name": employee["name"], "designation": employee["designation"], "mobile": employee["mobile"], "email": employee.get("email", "")}
+        # Update last login time
+        await db.employees.update_one(
+            {"mobile": data.mobile},
+            {"$set": {"last_login": datetime.now(timezone.utc).isoformat()}}
+        )
+        
+        # Check if there's an active test session
+        session = await db.employee_test_sessions.find_one(
+            {"employee_id": employee["id"], "is_active": True},
+            {"_id": 0}
+        )
+        
+        # Return full employee data with session info
+        return {
+            "_id": employee["id"],
+            "name": employee["name"],
+            "designation": employee["designation"],
+            "mobile": employee["mobile"],
+            "email": employee.get("email", ""),
+            "last_activity": employee.get("last_activity", ""),
+            "has_active_session": session is not None
+        }
     return {"success": False, "message": "Mobile number not found. Please register."}
 
 # Auto-save answer model
