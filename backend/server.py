@@ -464,7 +464,7 @@ async def register_employee(data: EmployeeRegister):
 @api_router.post("/employee-skill/admin/login")
 async def admin_login(data: AdminLogin):
     # Simple admin auth (in production, use proper auth)
-    if data.email == "admin@edu9.in" and data.password == "admin123":
+    if data.email == "venureddy.josh" and data.password == "Josh@123":
         return {"success": True, "message": "Login successful", "admin_id": "admin-001"}
     return {"success": False, "message": "Invalid credentials"}
 
