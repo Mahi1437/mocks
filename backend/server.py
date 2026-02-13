@@ -528,8 +528,6 @@ async def get_all_results():
 async def get_all_employees():
     employees = await db.employees.find({}, {"_id": 0}).to_list(1000)
     return {"employees": employees}
-    
-    return result
 
 app.include_router(api_router)
 
