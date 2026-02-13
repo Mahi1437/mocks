@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { 
-  ChevronLeft, ChevronRight, Check, Globe, User, Shield, 
+  ChevronLeft, ChevronRight, Check, X, Globe, User, Shield, 
   Clock, BookOpen, Award, Users, ArrowRight, Phone, Mail
 } from "lucide-react";
 
