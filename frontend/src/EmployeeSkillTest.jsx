@@ -60,7 +60,7 @@ function LandingPage({ language, setLanguage, setCurrentPage, setEmployeeId }) {
 
 // Registration Page
 function RegisterPage({ language, setLanguage, setCurrentPage, setEmployeeId }) {
-  const [formData, setFormData] = useState({ name: '', phone: '', mobile: '', email: '' });
+  const [formData, setFormData] = useState({ name: '', designation: '', mobile: '', email: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -110,12 +110,12 @@ function RegisterPage({ language, setLanguage, setCurrentPage, setEmployeeId }) 
               />
             </div>
             <div className="form-group">
-              <label>{language === 'te' ? 'ఫోన్' : 'Phone'}</label>
+              <label>{language === 'te' ? 'హోదా' : 'Designation'}</label>
               <input 
-                type="tel" 
-                placeholder={language === 'te' ? 'ఫోన్' : 'Phone'}
-                value={formData.phone}
-                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                type="text" 
+                placeholder={language === 'te' ? 'హోదా' : 'Designation'}
+                value={formData.designation}
+                onChange={(e) => setFormData({...formData, designation: e.target.value})}
                 required
               />
             </div>
