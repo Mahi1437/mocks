@@ -450,6 +450,11 @@ async def get_employee_sections():
 
 @api_router.post("/employee-skill/register")
 async def register_employee(data: EmployeeRegister):
+    # Check if mobile already exists
+    existing = await db.employees.find_one({"mobile": data.mobile})
+    if existing:
+        return {"success": False, "message": "Mobile number already registered. Please login."}
+    
     employee = {
         "id": str(uuid.uuid4()),
         "name": data.name,
@@ -460,6 +465,16 @@ async def register_employee(data: EmployeeRegister):
     }
     await db.employees.insert_one(employee)
     return {"success": True, "employee_id": employee["id"], "message": "Registration successful"}
+
+class EmployeeLogin(BaseModel):
+    mobile: str
+
+@api_router.post("/employee-skill/login")
+async def login_employee(data: EmployeeLogin):
+    employee = await db.employees.find_one({"mobile": data.mobile}, {"_id": 0})
+    if employee:
+        return {"success": True, "employee_id": employee["id"], "employee_name": employee["name"], "message": "Login successful"}
+    return {"success": False, "message": "Mobile number not found. Please register."}
 
 @api_router.post("/employee-skill/admin/login")
 async def admin_login(data: AdminLogin):
