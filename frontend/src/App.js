@@ -271,7 +271,7 @@ function HomePage({ darkMode, setDarkMode }) {
                 </div>
                 <button 
                   className="take-test-btn" 
-                  onClick={() => test.available ? navigate(`/${test.id}`) : alert('Coming Soon!')}
+                  onClick={() => test.available ? navigate(`/test/${test.id}`) : alert('Coming Soon!')}
                   disabled={!test.available}
                   data-testid={`take-test-${test.id}`}
                   style={{background: test.available ? test.color : undefined}}
