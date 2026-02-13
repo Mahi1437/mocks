@@ -470,7 +470,7 @@ function TestPage({ language, setLanguage, employeeId, setCurrentPage, setTestRe
 
           {currentQuestion && (
             <div className="question-content">
-              <p className="question-text">
+              <p className="question-text" style={{color: '#1a1a2e', fontSize: '1.15rem', fontWeight: '500', lineHeight: '1.8'}}>
                 {language === 'te' ? currentQuestion.telugu.question : currentQuestion.english.question}
               </p>
               
@@ -482,7 +482,7 @@ function TestPage({ language, setLanguage, employeeId, setCurrentPage, setTestRe
                     onClick={() => handleAnswerSelect(index)}
                   >
                     <span className="option-letter">{String.fromCharCode(65 + index)}</span>
-                    <span className="option-text">{option}</span>
+                    <span className="option-text" style={{color: '#1a1a2e'}}>{option}</span>
                     {answers[currentQuestion.id] === index && <Check size={18} className="check-icon" />}
                   </button>
                 ))}
