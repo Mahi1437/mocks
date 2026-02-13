@@ -379,9 +379,28 @@ function TestPage({ language, setLanguage, employeeId, setCurrentPage, setTestRe
   const sectionQuestions = questions.filter(q => q.section === currentSection);
   const currentQuestion = sectionQuestions[currentQuestionIndex];
 
-  const handleAnswerSelect = (optionIndex) => {
+  const handleAnswerSelect = async (optionIndex) => {
     if (currentQuestion) {
+      // Update local state immediately
       setAnswers({...answers, [currentQuestion.id]: optionIndex});
+      
+      // Auto-save to backend
+      setSaveStatus('saving');
+      try {
+        await axios.post(`${API}/save-answer`, {
+          employee_id: employeeId,
+          question_id: currentQuestion.id,
+          selected_answer: optionIndex,
+          section: currentQuestion.section
+        });
+        setSaveStatus('saved');
+        // Clear status after 2 seconds
+        setTimeout(() => setSaveStatus(''), 2000);
+      } catch (err) {
+        console.error('Error saving answer:', err);
+        setSaveStatus('error');
+        setTimeout(() => setSaveStatus(''), 3000);
+      }
     }
   };
 
@@ -414,6 +433,9 @@ function TestPage({ language, setLanguage, employeeId, setCurrentPage, setTestRe
         answers: answersList,
         time_taken: (170 * 60) - timeRemaining
       });
+
+      // Clear saved progress after successful submission
+      await axios.delete(`${API}/clear-progress/${employeeId}`);
 
       setTestResult(response.data);
       setCurrentPage('results');
