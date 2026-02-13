@@ -71,7 +71,7 @@ const MOCK_TESTS_CONFIG = {
     durationSeconds: 150 * 60,
     maxMarks: 375,
     color: "#059669",
-    available: false,
+    available: true,
     logo: "https://upload.wikimedia.org/wikipedia/en/thumb/5/5e/Vellore_Institute_of_Technology_seal_2017.svg/1200px-Vellore_Institute_of_Technology_seal_2017.svg.png",
     sections: [
       { id: "physics", name: "Physics", icon: "Atom", questions: 35 },
@@ -91,7 +91,7 @@ const MOCK_TESTS_CONFIG = {
     durationSeconds: 150 * 60,
     maxMarks: 375,
     color: "#dc2626",
-    available: false,
+    available: true,
     logo: "https://upload.wikimedia.org/wikipedia/en/thumb/5/53/SRMSEAL.png/220px-SRMSEAL.png",
     sections: [
       { id: "physics", name: "Physics", icon: "Atom", questions: 35 },
@@ -112,7 +112,7 @@ const MOCK_TESTS_CONFIG = {
     durationSeconds: 120 * 60,
     maxMarks: 300,
     color: "#7c3aed",
-    available: false,
+    available: true,
     logo: "https://upload.wikimedia.org/wikipedia/en/2/21/Amrita-vishwa-vidyapeetham-color-logo.png",
     sections: [
       { id: "physics", name: "Physics", icon: "Atom", questions: 30 },
