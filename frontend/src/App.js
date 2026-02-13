@@ -951,6 +951,10 @@ function App() {
     <Routes>
       <Route path="/" element={<HomePage darkMode={darkMode} setDarkMode={setDarkMode} />} />
       <Route path="/skilltest" element={<EmployeeSkillTest />} />
+      <Route path="/bitsat" element={<AdvancedMockTest darkMode={darkMode} setDarkMode={setDarkMode} />} />
+      <Route path="/viteee" element={<AdvancedMockTest darkMode={darkMode} setDarkMode={setDarkMode} />} />
+      <Route path="/srmjeee" element={<AdvancedMockTest darkMode={darkMode} setDarkMode={setDarkMode} />} />
+      <Route path="/aeee" element={<AdvancedMockTest darkMode={darkMode} setDarkMode={setDarkMode} />} />
       <Route path="/:testId" element={<MockTestPage darkMode={darkMode} setDarkMode={setDarkMode} />} />
     </Routes>
   );
