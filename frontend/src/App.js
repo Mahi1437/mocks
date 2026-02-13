@@ -950,7 +950,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage darkMode={darkMode} setDarkMode={setDarkMode} />} />
-      <Route path="/skilltest" element={<EmployeeSkillTest />} />
+      <Route path="/skilltest" element={<AdvancedSkillTest />} />
       <Route path="/test/:testId" element={<AdvancedMockTest darkMode={darkMode} setDarkMode={setDarkMode} />} />
       <Route path="/:testId" element={<MockTestPage darkMode={darkMode} setDarkMode={setDarkMode} />} />
     </Routes>
