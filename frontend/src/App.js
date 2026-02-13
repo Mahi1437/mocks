@@ -381,15 +381,26 @@ function MockTestPage({ darkMode, setDarkMode }) {
 
   // Fetch questions
   const fetchQuestions = async () => {
-    if (testId !== 'bitsat') return;
-    setLoading(true);
-    try {
-      const response = await axios.get(`${API}/quiz/all-questions`);
-      setAllQuestions(response.data);
-      setLoading(false);
-    } catch (e) {
-      console.error("Error fetching questions:", e);
-      setLoading(false);
+    if (testId === 'bitsat') {
+      setLoading(true);
+      try {
+        const response = await axios.get(`${API}/quiz/all-questions`);
+        setAllQuestions(response.data);
+        setLoading(false);
+      } catch (e) {
+        console.error("Error fetching questions:", e);
+        setLoading(false);
+      }
+    } else if (testId === 'skilltest') {
+      setLoading(true);
+      try {
+        const response = await axios.get(`${API}/skilltest/all-questions`);
+        setAllQuestions(response.data);
+        setLoading(false);
+      } catch (e) {
+        console.error("Error fetching questions:", e);
+        setLoading(false);
+      }
     }
   };
 
