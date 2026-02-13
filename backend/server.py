@@ -529,6 +529,26 @@ async def get_all_employees():
     employees = await db.employees.find({}, {"_id": 0}).to_list(1000)
     return {"employees": employees}
 
+class SuggestionRequest(BaseModel):
+    employee_id: str
+    suggestion: str
+
+@api_router.post("/employee-skill/admin/suggestion")
+async def add_suggestion(data: SuggestionRequest):
+    suggestion = {
+        "id": str(uuid.uuid4()),
+        "employee_id": data.employee_id,
+        "suggestion": data.suggestion,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.suggestions.insert_one(suggestion)
+    return {"success": True, "message": "Suggestion added"}
+
+@api_router.get("/employee-skill/admin/suggestions/{employee_id}")
+async def get_suggestions(employee_id: str):
+    suggestions = await db.suggestions.find({"employee_id": employee_id}, {"_id": 0}).to_list(100)
+    return {"suggestions": suggestions}
+
 app.include_router(api_router)
 
 app.add_middleware(
