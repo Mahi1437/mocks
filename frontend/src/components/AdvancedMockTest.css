@@ -617,11 +617,11 @@
 
 .option-btn:hover {
   border-color: var(--primary);
-  background: var(--hover-bg);
+  background: var(--option-hover);
 }
 
 .option-btn.selected {
-  background: rgba(37, 99, 235, 0.15);
+  background: rgba(37, 99, 235, 0.2);
   border-color: var(--primary);
 }
 
@@ -634,7 +634,7 @@
   background: var(--primary);
   border-radius: 8px;
   font-weight: 700;
-  color: white;
+  color: white !important;
   flex-shrink: 0;
 }
 
@@ -647,6 +647,7 @@
   font-size: 1rem;
   color: var(--text-primary);
   line-height: 1.5;
+  font-weight: 500;
 }
 
 .check-icon {
@@ -674,6 +675,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  color: var(--btn-text);
 }
 
 .nav-btn:disabled {
