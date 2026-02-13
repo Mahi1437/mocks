@@ -111,14 +111,22 @@ class TestEmployeeSkillAPIs:
         assert "questions" in data
         assert len(data["questions"]) == 170  # 170 questions total
         
-        # Check question structure
+        # Check question structure (bilingual format)
         question = data["questions"][0]
         assert "id" in question
-        assert "question" in question
-        assert "question_telugu" in question
-        assert "options" in question
+        assert "english" in question  # English version
+        assert "telugu" in question   # Telugu version
         assert "section" in question
-        assert len(question["options"]) == 4  # 4 options per question
+        assert "correct_answer" in question
+        
+        # Check English question structure
+        assert "question" in question["english"]
+        assert "options" in question["english"]
+        assert len(question["english"]["options"]) == 4  # 4 options per question
+        
+        # Check Telugu question structure
+        assert "question" in question["telugu"]
+        assert "options" in question["telugu"]
     
     def test_submit_quiz(self):
         """Test quiz submission"""
