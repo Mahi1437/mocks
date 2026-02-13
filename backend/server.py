@@ -669,6 +669,15 @@ async def submit_employee_test(request: EmployeeSubmitRequest):
     result_for_db = result.copy()
     await db.employee_test_results.insert_one(result_for_db)
     
+    # Clear the test session after successful submission
+    await db.employee_test_sessions.update_one(
+        {"employee_id": request.employee_id},
+        {"$set": {"is_active": False, "completed_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    # Clear individual answer progress
+    await db.employee_progress.delete_many({"employee_id": request.employee_id})
+    
     return result
 
 @api_router.get("/employee-skill/admin/stats")
