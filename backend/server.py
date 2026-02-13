@@ -532,7 +532,7 @@ async def submit_employee_test(request: EmployeeSubmitRequest):
     # Get employee info
     employee = await db.employees.find_one({"id": request.employee_id}, {"_id": 0})
     
-    section_results = {}
+    section_results = []
     total_correct = 0
     total_attempted = 0
     
@@ -548,13 +548,16 @@ async def submit_employee_test(request: EmployeeSubmitRequest):
             if question and answer.selected_answer == question["correct_answer"]:
                 correct += 1
         
-        section_results[section_id] = {
-            "name": EMPLOYEE_SECTIONS[section_id]["name"],
-            "total": len(section_questions),
+        section_results.append({
+            "section_id": section_id,
+            "section_name": EMPLOYEE_SECTIONS[section_id]["name"],
+            "total_questions": len(section_questions),
             "attempted": attempted,
             "correct": correct,
+            "wrong": attempted - correct,
+            "score": correct,
             "percentage": (correct / len(section_questions) * 100) if section_questions else 0
-        }
+        })
         total_correct += correct
         total_attempted += attempted
     
@@ -565,10 +568,12 @@ async def submit_employee_test(request: EmployeeSubmitRequest):
         "id": str(uuid.uuid4()),
         "employee_id": request.employee_id,
         "employee_name": employee["name"] if employee else "Unknown",
+        "designation": employee.get("designation", "") if employee else "",
         "sections": section_results,
         "total_questions": total_questions,
         "total_attempted": total_attempted,
         "total_correct": total_correct,
+        "score": total_correct,
         "percentage": round(overall_percentage, 2),
         "time_taken": request.time_taken,
         "timestamp": datetime.now(timezone.utc).isoformat()
