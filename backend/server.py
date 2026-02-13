@@ -453,7 +453,7 @@ async def register_employee(data: EmployeeRegister):
     employee = {
         "id": str(uuid.uuid4()),
         "name": data.name,
-        "phone": data.phone,
+        "designation": data.designation,
         "mobile": data.mobile,
         "email": data.email,
         "created_at": datetime.now(timezone.utc).isoformat()
