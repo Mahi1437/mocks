@@ -174,6 +174,70 @@ MATHEMATICS_QUESTIONS = [
     {"id": 40, "question": "The sum of an infinite GP with first term 1 and common ratio 1/2 is:", "options": {"A": "1", "B": "2", "C": "3", "D": "∞"}, "correct_answer": "B", "hint": "S = a/(1-r) for |r| < 1."}
 ]
 
+# ============== SKILL TEST QUESTIONS ==============
+
+# SECTION: APTITUDE (20 Questions)
+APTITUDE_QUESTIONS = [
+    {"id": 1, "question": "If a train travels 360 km in 4 hours, what is its speed?", "options": {"A": "80 km/hr", "B": "90 km/hr", "C": "100 km/hr", "D": "70 km/hr"}, "correct_answer": "B", "hint": "Speed = Distance/Time"},
+    {"id": 2, "question": "A man buys an article for ₹500 and sells it for ₹600. What is the profit percentage?", "options": {"A": "10%", "B": "15%", "C": "20%", "D": "25%"}, "correct_answer": "C", "hint": "Profit% = (Profit/CP) × 100"},
+    {"id": 3, "question": "If 6 workers can complete a job in 12 days, how many days will 9 workers take?", "options": {"A": "6 days", "B": "8 days", "C": "10 days", "D": "18 days"}, "correct_answer": "B", "hint": "More workers, less days (inverse proportion)"},
+    {"id": 4, "question": "The ratio of boys to girls in a class is 3:2. If there are 30 boys, how many girls are there?", "options": {"A": "15", "B": "20", "C": "25", "D": "18"}, "correct_answer": "B", "hint": "Use ratio proportion"},
+    {"id": 5, "question": "A sum of money doubles in 5 years at simple interest. The rate of interest is:", "options": {"A": "10%", "B": "15%", "C": "20%", "D": "25%"}, "correct_answer": "C", "hint": "SI = P means rate = 100/time"},
+    {"id": 6, "question": "What is 15% of 240?", "options": {"A": "32", "B": "36", "C": "40", "D": "44"}, "correct_answer": "B", "hint": "15/100 × 240"},
+    {"id": 7, "question": "If x:y = 2:3 and y:z = 4:5, then x:z = ?", "options": {"A": "8:15", "B": "2:5", "C": "3:5", "D": "4:15"}, "correct_answer": "A", "hint": "Combine ratios through common term"},
+    {"id": 8, "question": "A tank can be filled by pipe A in 6 hours and pipe B in 8 hours. How long to fill together?", "options": {"A": "3 hours 26 min", "B": "3 hours", "C": "4 hours", "D": "2 hours 30 min"}, "correct_answer": "A", "hint": "Combined rate = 1/6 + 1/8"},
+    {"id": 9, "question": "The average of 5 numbers is 20. If one number is excluded, the average becomes 18. The excluded number is:", "options": {"A": "24", "B": "26", "C": "28", "D": "30"}, "correct_answer": "C", "hint": "Total = 5×20, New total = 4×18"},
+    {"id": 10, "question": "A car covers 450 km in 9 hours. What distance will it cover in 5 hours at the same speed?", "options": {"A": "200 km", "B": "225 km", "C": "250 km", "D": "275 km"}, "correct_answer": "C", "hint": "First find speed, then multiply by 5"},
+    {"id": 11, "question": "The compound interest on ₹1000 at 10% per annum for 2 years is:", "options": {"A": "₹200", "B": "₹210", "C": "₹220", "D": "₹250"}, "correct_answer": "B", "hint": "CI = P(1+r/100)^n - P"},
+    {"id": 12, "question": "If the selling price is ₹720 and loss is 10%, what is the cost price?", "options": {"A": "₹750", "B": "₹800", "C": "₹850", "D": "₹900"}, "correct_answer": "B", "hint": "SP = CP × (100-Loss%)/100"},
+    {"id": 13, "question": "A and B can do a work in 10 days and 15 days respectively. In how many days can they complete it together?", "options": {"A": "5 days", "B": "6 days", "C": "7 days", "D": "8 days"}, "correct_answer": "B", "hint": "Combined rate = 1/10 + 1/15"},
+    {"id": 14, "question": "The HCF of 36 and 48 is:", "options": {"A": "6", "B": "12", "C": "18", "D": "24"}, "correct_answer": "B", "hint": "Find common factors"},
+    {"id": 15, "question": "A boat travels 20 km upstream in 4 hours. If the speed of stream is 2 km/hr, find the speed of boat in still water.", "options": {"A": "5 km/hr", "B": "7 km/hr", "C": "9 km/hr", "D": "11 km/hr"}, "correct_answer": "B", "hint": "Upstream speed = Boat speed - Stream speed"},
+    {"id": 16, "question": "If 40% of a number is 80, what is the number?", "options": {"A": "180", "B": "200", "C": "220", "D": "240"}, "correct_answer": "B", "hint": "Number = 80 × 100/40"},
+    {"id": 17, "question": "The LCM of 12, 15 and 20 is:", "options": {"A": "40", "B": "50", "C": "60", "D": "80"}, "correct_answer": "C", "hint": "Find smallest common multiple"},
+    {"id": 18, "question": "A shopkeeper marks an article 25% above CP and gives 10% discount. His profit is:", "options": {"A": "12.5%", "B": "15%", "C": "17.5%", "D": "20%"}, "correct_answer": "A", "hint": "Final SP = 1.25 × 0.9 × CP"},
+    {"id": 19, "question": "The sum of ages of father and son is 50 years. Five years ago, father was 4 times the son's age. Find father's present age.", "options": {"A": "35 years", "B": "38 years", "C": "40 years", "D": "42 years"}, "correct_answer": "C", "hint": "Form equations and solve"},
+    {"id": 20, "question": "A mixture contains milk and water in ratio 5:3. If 4 liters of water is added, ratio becomes 5:4. Find initial quantity of milk.", "options": {"A": "15 liters", "B": "20 liters", "C": "25 liters", "D": "30 liters"}, "correct_answer": "B", "hint": "Let milk = 5x, water = 3x, then 5x/(3x+4) = 5/4"}
+]
+
+# SECTION: REASONING (15 Questions)
+REASONING_QUESTIONS = [
+    {"id": 1, "question": "Find the next number: 2, 6, 12, 20, 30, ?", "options": {"A": "40", "B": "42", "C": "44", "D": "46"}, "correct_answer": "B", "hint": "Differences: 4, 6, 8, 10, 12..."},
+    {"id": 2, "question": "If COMPUTER is coded as RFUVQNPC, then PRINTER is coded as:", "options": {"A": "QSJOUFS", "B": "QSJOUFQ", "C": "OQHOUFS", "D": "SFUOQJS"}, "correct_answer": "A", "hint": "Each letter +1"},
+    {"id": 3, "question": "Find the odd one: Apple, Mango, Potato, Orange", "options": {"A": "Apple", "B": "Mango", "C": "Potato", "D": "Orange"}, "correct_answer": "C", "hint": "One is not a fruit"},
+    {"id": 4, "question": "If South-East becomes North, then North-East becomes:", "options": {"A": "South", "B": "West", "C": "South-West", "D": "North-West"}, "correct_answer": "C", "hint": "Rotate 135° clockwise"},
+    {"id": 5, "question": "Complete the series: A, D, G, J, ?", "options": {"A": "L", "B": "M", "C": "N", "D": "K"}, "correct_answer": "B", "hint": "Skip 2 letters each time"},
+    {"id": 6, "question": "In a row of students, Raj is 12th from left and 18th from right. Total students in row?", "options": {"A": "28", "B": "29", "C": "30", "D": "31"}, "correct_answer": "B", "hint": "Total = Left + Right - 1"},
+    {"id": 7, "question": "If × means +, + means ÷, - means ×, ÷ means -, then 8 × 7 - 8 + 40 ÷ 2 = ?", "options": {"A": "8", "B": "9.4", "C": "10", "D": "7.4"}, "correct_answer": "D", "hint": "Replace symbols and calculate"},
+    {"id": 8, "question": "Pointing to a photograph, a man said 'She is the daughter of my grandfather's only son.' How is the girl related to the man?", "options": {"A": "Daughter", "B": "Sister", "C": "Mother", "D": "Aunt"}, "correct_answer": "B", "hint": "Grandfather's only son = Father"},
+    {"id": 9, "question": "Find missing: 1, 8, 27, 64, ?", "options": {"A": "100", "B": "125", "C": "144", "D": "169"}, "correct_answer": "B", "hint": "Cubes: 1³, 2³, 3³, 4³, 5³"},
+    {"id": 10, "question": "If PALE is coded as 2134 and LEAP is coded as 3412, what is PLEA?", "options": {"A": "2341", "B": "2143", "C": "2314", "D": "2413"}, "correct_answer": "C", "hint": "P=2, L=3, E=1, A=4"},
+    {"id": 11, "question": "Which figure completes the pattern? □, △, □, △, □, ?", "options": {"A": "□", "B": "△", "C": "○", "D": "◇"}, "correct_answer": "B", "hint": "Alternating pattern"},
+    {"id": 12, "question": "A is father of B. C is brother of A. D is son of C. How is D related to B?", "options": {"A": "Brother", "B": "Cousin", "C": "Uncle", "D": "Nephew"}, "correct_answer": "B", "hint": "D is son of B's uncle"},
+    {"id": 13, "question": "Find the odd one: 121, 144, 169, __(odd)__, 225", "options": {"A": "196", "B": "190", "C": "195", "D": "198"}, "correct_answer": "B", "hint": "All others are perfect squares"},
+    {"id": 14, "question": "If 'pen' is called 'eraser', 'eraser' is called 'book', 'book' is called 'pencil', what do you write with?", "options": {"A": "Eraser", "B": "Book", "C": "Pencil", "D": "Pen"}, "correct_answer": "A", "hint": "Pen is called eraser"},
+    {"id": 15, "question": "What comes next: Z, Y, X, W, V, ?", "options": {"A": "S", "B": "T", "C": "U", "D": "R"}, "correct_answer": "C", "hint": "Reverse alphabet sequence"}
+]
+
+# SECTION: VERBAL ABILITY (15 Questions)
+VERBAL_QUESTIONS = [
+    {"id": 1, "question": "Choose the synonym of 'ABUNDANT':", "options": {"A": "Scarce", "B": "Plentiful", "C": "Rare", "D": "Limited"}, "correct_answer": "B", "hint": "Abundant means existing in large quantities"},
+    {"id": 2, "question": "Choose the antonym of 'VAGUE':", "options": {"A": "Unclear", "B": "Ambiguous", "C": "Precise", "D": "Hazy"}, "correct_answer": "C", "hint": "Vague means unclear or undefined"},
+    {"id": 3, "question": "Fill in the blank: He has been working ___ morning.", "options": {"A": "from", "B": "since", "C": "for", "D": "by"}, "correct_answer": "B", "hint": "'Since' is used with point of time"},
+    {"id": 4, "question": "Choose the correct spelling:", "options": {"A": "Occurence", "B": "Occurance", "C": "Occurrence", "D": "Occurrance"}, "correct_answer": "C", "hint": "Double 'c' and double 'r'"},
+    {"id": 5, "question": "The idiom 'Break the ice' means:", "options": {"A": "To damage something", "B": "To start a conversation", "C": "To freeze", "D": "To end relationship"}, "correct_answer": "B", "hint": "To initiate social interaction"},
+    {"id": 6, "question": "Choose the synonym of 'ELOQUENT':", "options": {"A": "Silent", "B": "Articulate", "C": "Quiet", "D": "Reserved"}, "correct_answer": "B", "hint": "Eloquent means fluent or persuasive"},
+    {"id": 7, "question": "Fill in the blank: Neither the students ___ the teacher was present.", "options": {"A": "or", "B": "nor", "C": "and", "D": "but"}, "correct_answer": "B", "hint": "'Neither' is paired with 'nor'"},
+    {"id": 8, "question": "Choose the antonym of 'OPTIMISTIC':", "options": {"A": "Hopeful", "B": "Positive", "C": "Pessimistic", "D": "Cheerful"}, "correct_answer": "C", "hint": "Opposite of hopeful/positive outlook"},
+    {"id": 9, "question": "The phrase 'A blessing in disguise' means:", "options": {"A": "A hidden curse", "B": "Something good that seemed bad at first", "C": "A beautiful dress", "D": "A religious blessing"}, "correct_answer": "B", "hint": "An apparent misfortune that results in good"},
+    {"id": 10, "question": "Choose the correct sentence:", "options": {"A": "He is more taller than me", "B": "He is tallest than me", "C": "He is taller than I", "D": "He is most tall than me"}, "correct_answer": "C", "hint": "Comparative doesn't use 'more' with '-er'"},
+    {"id": 11, "question": "Choose the synonym of 'DILIGENT':", "options": {"A": "Lazy", "B": "Careless", "C": "Hardworking", "D": "Negligent"}, "correct_answer": "C", "hint": "Diligent means showing care and effort"},
+    {"id": 12, "question": "Fill in the blank: The book ___ on the table since morning.", "options": {"A": "is lying", "B": "has been lying", "C": "was lying", "D": "had lying"}, "correct_answer": "B", "hint": "Present perfect continuous for ongoing action"},
+    {"id": 13, "question": "Choose the antonym of 'TRIVIAL':", "options": {"A": "Unimportant", "B": "Minor", "C": "Significant", "D": "Petty"}, "correct_answer": "C", "hint": "Trivial means of little importance"},
+    {"id": 14, "question": "The idiom 'Cost an arm and a leg' means:", "options": {"A": "Very cheap", "B": "Very expensive", "C": "Medical expense", "D": "Physical injury"}, "correct_answer": "B", "hint": "Something that is very costly"},
+    {"id": 15, "question": "Choose the correct word: The ___ of the team was high after the victory.", "options": {"A": "moral", "B": "morale", "C": "morality", "D": "morals"}, "correct_answer": "B", "hint": "Morale refers to confidence/enthusiasm of a group"}
+]
+
 # Define Models
 class QuizQuestion(BaseModel):
     id: int
