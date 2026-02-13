@@ -19,21 +19,23 @@ const API = `${BACKEND_URL}/api`;
 const MOCK_TESTS_CONFIG = {
   skilltest: {
     id: "skilltest",
-    name: "Skill Test",
-    fullName: "Skill Assessment Test 2025",
+    name: "Employee Skill Test",
+    fullName: "ఉద్యోగి నైపుణ్య మూల్యాంకనం",
     institution: "Edu9 Career Guidance",
-    description: "Comprehensive Skill Assessment Test",
-    questions: 50,
-    duration: "1 hour",
-    durationSeconds: 60 * 60,
-    maxMarks: 150,
-    color: "#10b981",
+    description: "Bilingual Employee Skill Assessment (Telugu/English)",
+    questions: 170,
+    duration: "45 minutes",
+    durationSeconds: 45 * 60,
+    maxMarks: 170,
+    color: "#0077b6",
     available: true,
     logo: "https://customer-assets.emergentagent.com/job_gemini-link-1/artifacts/mvpyai8y_channels4_profile.jpg",
     sections: [
-      { id: "aptitude", name: "Aptitude", icon: "Brain", questions: 20 },
-      { id: "reasoning", name: "Reasoning", icon: "Calculator", questions: 15 },
-      { id: "verbal", name: "Verbal Ability", icon: "Languages", questions: 15 }
+      { id: "parent_interaction", name: "Parent Interaction", icon: "Users", questions: 34 },
+      { id: "counseling", name: "Counseling", icon: "Brain", questions: 34 },
+      { id: "ethics", name: "Ethics", icon: "Shield", questions: 34 },
+      { id: "data_privacy", name: "Data Privacy", icon: "Languages", questions: 34 },
+      { id: "communication", name: "Communication", icon: "Calculator", questions: 34 }
     ]
   },
   bitsat: {
