@@ -12,26 +12,38 @@ Create a comprehensive Mock Test Application platform with multiple entrance exa
 ## Platform Overview
 A multi-test platform with homepage listing all available mock tests:
 - BITSAT Mock Test (130 questions, 3 hours) - ✅ LIVE
-- Employee Skill Test (170 questions, 45 mins) - ✅ LIVE (Bilingual Telugu/English)
+- Employee Skill Test (170 questions, 170 mins) - ✅ LIVE (Bilingual Telugu/English)
 - VITEEE Mock Test (125 questions, 2.5 hours) - Coming Soon
 - SRMJEEE Mock Test (125 questions, 2.5 hours) - Coming Soon
 - AEEE Mock Test (100 questions, 2 hours) - Coming Soon
 
 ---
 
+## BITSAT Mock Test
+- **URL**: `/bitsat`
+- 5 Sections: Physics(30), Chemistry(30), English(10), Logical Reasoning(20), Mathematics(40)
+- Total: 130 Questions | Maximum Marks: 390
+- Marking: +3 correct, -1 wrong, 0 unattempted
+- Duration: 3 hours (180 minutes)
+- ✅ Dark mode with visible options
+
+---
+
 ## Employee Skill Test (FULLY IMPLEMENTED - Feb 2025)
 - **URL**: `/skilltest`
+- **Duration**: 170 minutes
 - **Features**:
   - ✅ Bilingual support (Telugu/English) with toggle
   - ✅ Employee registration (Name, Designation, Mobile, Email)
+  - ✅ Employee login (with mobile number for existing users)
   - ✅ Admin login with analytics dashboard
   - ✅ 5 Sections: Parent Interaction(34), Counseling(34), Ethics(34), Data Privacy(34), Communication(34)
   - ✅ Total: 170 Questions
-  - ✅ Duration: 45 minutes
   - ✅ Results stored in MongoDB
   - ✅ Admin analytics with skill analysis
   - ✅ Training recommendations
   - ✅ Suggestion/Notes feature for employees
+  - ✅ Question and options clearly visible
 
 ### Admin Dashboard Features:
 1. **Overview Tab**:
