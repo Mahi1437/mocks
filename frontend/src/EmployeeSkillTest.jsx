@@ -206,10 +206,10 @@ function AdminLoginPage({ language, setLanguage, setCurrentPage, setIsAdmin }) {
           
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>{language === 'te' ? 'ఇమెయిల్' : 'Email'}</label>
+              <label>{language === 'te' ? 'యూజర్‌నేమ్' : 'Username'}</label>
               <input 
-                type="email" 
-                placeholder={language === 'te' ? 'ఇమెయిల్' : 'Email'}
+                type="text" 
+                placeholder={language === 'te' ? 'యూజర్‌నేమ్' : 'Username'}
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
                 required
