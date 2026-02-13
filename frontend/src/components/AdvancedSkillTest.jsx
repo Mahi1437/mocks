@@ -263,6 +263,35 @@ export default function AdvancedSkillTest() {
     return () => clearInterval(timerRef.current);
   }, [currentPage, soundEnabled]);
 
+  // Auto-save session every 30 seconds during quiz
+  useEffect(() => {
+    if (currentPage !== "quiz" || !employee?._id) return;
+    
+    saveSessionRef.current = setInterval(() => {
+      saveTestSession();
+    }, 30000); // Save every 30 seconds
+
+    return () => {
+      if (saveSessionRef.current) {
+        clearInterval(saveSessionRef.current);
+      }
+    };
+  }, [currentPage, employee, selectedAnswers, currentSection, currentQuestion, timeRemaining]);
+
+  // Save session on page unload
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (currentPage === "quiz" && employee?._id) {
+        saveTestSession();
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [currentPage, employee, selectedAnswers, currentSection, currentQuestion, timeRemaining]);
+
   // Fullscreen
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
