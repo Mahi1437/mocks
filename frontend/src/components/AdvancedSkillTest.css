@@ -888,6 +888,7 @@
   flex: 1;
   padding: 24px;
   overflow-y: auto;
+  background: var(--bg-secondary);
 }
 
 .question-text {
@@ -895,6 +896,7 @@
   line-height: 1.9;
   margin-bottom: 28px;
   color: var(--text-primary);
+  font-weight: 500;
 }
 
 .options-container {
@@ -908,7 +910,7 @@
   align-items: center;
   gap: 16px;
   padding: 16px 20px;
-  background: var(--bg-tertiary);
+  background: var(--option-bg);
   border: 2px solid var(--border-color);
   border-radius: 12px;
   cursor: pointer;
@@ -918,11 +920,11 @@
 
 .option-btn:hover {
   border-color: var(--primary-light);
-  background: var(--hover-bg);
+  background: var(--option-hover);
 }
 
 .option-btn.selected {
-  background: rgba(0, 119, 182, 0.15);
+  background: rgba(0, 119, 182, 0.2);
   border-color: var(--primary-light);
 }
 
@@ -935,7 +937,7 @@
   background: var(--primary-light);
   border-radius: 8px;
   font-weight: 700;
-  color: white;
+  color: white !important;
   flex-shrink: 0;
 }
 
@@ -948,6 +950,7 @@
   font-size: 1rem;
   color: var(--text-primary);
   line-height: 1.6;
+  font-weight: 500;
 }
 
 .check-icon {
