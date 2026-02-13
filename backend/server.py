@@ -415,7 +415,7 @@ class EmployeeRegister(BaseModel):
     email: str
 
 class AdminLogin(BaseModel):
-    email: str
+    username: str
     password: str
 
 class EmployeeAnswer(BaseModel):
