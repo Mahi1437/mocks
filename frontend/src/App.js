@@ -198,7 +198,7 @@ function HomePage({ darkMode, setDarkMode }) {
             Get real exam experience and boost your confidence.
           </p>
           <div className="hero-buttons">
-            <button className="primary-btn" onClick={() => navigate('/bitsat')} data-testid="start-free-test">
+            <button className="primary-btn" onClick={() => navigate('/test/bitsat')} data-testid="start-free-test">
               Start Free Test
               <ArrowRight size={20} />
             </button>
