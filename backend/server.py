@@ -6,7 +6,7 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 import uuid
 from datetime import datetime, timezone
 
@@ -407,6 +407,36 @@ EMPLOYEE_SECTIONS = {
     "communication": {"name": "Communication", "name_te": "కమ్యూనికేషన్"}
 }
 
+
+def normalize_employee_sections(sections: Any) -> Dict[str, Dict[str, float]]:
+    """Normalize section payloads to a frontend-friendly object keyed by section_id."""
+    normalized: Dict[str, Dict[str, float]] = {}
+
+    if isinstance(sections, dict):
+        for section_id, data in sections.items():
+            normalized[section_id] = {
+                "name": data.get("name") or data.get("section_name") or EMPLOYEE_SECTIONS.get(section_id, {}).get("name", section_id.replace("_", " ").title()),
+                "total": data.get("total", data.get("total_questions", 0)),
+                "attempted": data.get("attempted", 0),
+                "correct": data.get("correct", 0),
+                "percentage": data.get("percentage", 0)
+            }
+        return normalized
+
+    if isinstance(sections, list):
+        for section_data in sections:
+            section_id = section_data.get("section_id")
+            if not section_id:
+                continue
+            normalized[section_id] = {
+                "name": section_data.get("name") or section_data.get("section_name") or EMPLOYEE_SECTIONS.get(section_id, {}).get("name", section_id.replace("_", " ").title()),
+                "total": section_data.get("total", section_data.get("total_questions", 0)),
+                "attempted": section_data.get("attempted", 0),
+                "correct": section_data.get("correct", 0),
+                "percentage": section_data.get("percentage", 0)
+            }
+    return normalized
+
 # Models for Employee Skill Assessment
 class EmployeeRegister(BaseModel):
     name: str
@@ -649,13 +679,16 @@ async def submit_employee_test(request: EmployeeSubmitRequest):
     
     total_questions = len(EMPLOYEE_SKILL_QUESTIONS)
     overall_percentage = (total_correct / total_questions * 100) if total_questions else 0
-    
+
+    sections_normalized = normalize_employee_sections(section_results)
+
     result = {
         "id": str(uuid.uuid4()),
         "employee_id": request.employee_id,
         "employee_name": employee["name"] if employee else "Unknown",
         "designation": employee.get("designation", "") if employee else "",
         "sections": section_results,
+        "sections_normalized": sections_normalized,
         "total_questions": total_questions,
         "total_attempted": total_attempted,
         "total_correct": total_correct,
@@ -694,22 +727,33 @@ async def get_admin_stats():
     
     # Get recent results
     recent_results = await db.employee_test_results.find({}, {"_id": 0}).sort("timestamp", -1).limit(10).to_list(10)
-    
-    # Get all employees
+    recent_results = [
+        {**result, "sections_normalized": normalize_employee_sections(result.get("sections"))}
+        for result in recent_results
+    ]
+
+    # Get all employees and all results to build per-employee analysis
     employees = await db.employees.find({}, {"_id": 0}).to_list(1000)
+    
     
     return {
         "total_employees": total_employees,
         "tests_completed": total_tests,
         "average_score": round(avg_score, 1) if avg_score else 0,
         "recent_results": recent_results,
-        "employees": employees
+        "employees": employee_records,
+        "section_averages": section_averages
+
     }
 
 @api_router.get("/employee-skill/admin/results")
 async def get_all_results():
     results = await db.employee_test_results.find({}, {"_id": 0}).to_list(1000)
-    return {"results": results}
+    normalized_results = [
+        {**result, "sections_normalized": normalize_employee_sections(result.get("sections"))}
+        for result in results
+    ]
+    return {"results": normalized_results}
 
 @api_router.get("/employee-skill/admin/employees")
 async def get_all_employees():

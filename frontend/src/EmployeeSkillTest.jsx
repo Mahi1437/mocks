@@ -699,7 +699,7 @@ function ResultsPage({ language, setLanguage, testResult, setCurrentPage }) {
               <div className="table-cell">{language === 'te' ? 'సరైనవి' : 'Correct'}</div>
               <div className="table-cell">%</div>
             </div>
-            {Object.entries(testResult.sections).map(([sectionId, data]) => (
+            {Object.entries(normalizeSections(testResult.sections_normalized || testResult.sections)).map(([sectionId, data]) => (
               <div key={sectionId} className="table-row">
                 <div className="table-cell">{data.name}</div>
                 <div className="table-cell">{data.total}</div>
@@ -719,6 +719,36 @@ function ResultsPage({ language, setLanguage, testResult, setCurrentPage }) {
   );
 }
 
+const normalizeSections = (rawSections) => {
+  if (!rawSections) return {};
+
+  if (Array.isArray(rawSections)) {
+    return rawSections.reduce((acc, section) => {
+      const sectionId = section.section_id;
+      if (!sectionId) return acc;
+      acc[sectionId] = {
+        name: section.name || section.section_name || sectionId.replace(/_/g, ' '),
+        total: section.total ?? section.total_questions ?? 0,
+        attempted: section.attempted ?? 0,
+        correct: section.correct ?? 0,
+        percentage: section.percentage ?? 0
+      };
+      return acc;
+    }, {});
+  }
+
+  return Object.entries(rawSections).reduce((acc, [sectionId, section]) => {
+    acc[sectionId] = {
+      name: section.name || section.section_name || sectionId.replace(/_/g, ' '),
+      total: section.total ?? section.total_questions ?? 0,
+      attempted: section.attempted ?? 0,
+      correct: section.correct ?? 0,
+      percentage: section.percentage ?? 0
+    };
+    return acc;
+  }, {});
+};
+
 // Admin Dashboard with Analytics
 function AdminDashboard({ language, setLanguage, setCurrentPage, setIsAdmin }) {
   const [results, setResults] = useState([]);
@@ -727,6 +757,8 @@ function AdminDashboard({ language, setLanguage, setCurrentPage, setIsAdmin }) {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [viewMode, setViewMode] = useState('overview'); // 'overview', 'employees', 'analytics'
   const [suggestionText, setSuggestionText] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('recent');
 
   useEffect(() => {
     fetchData();
@@ -738,7 +770,11 @@ function AdminDashboard({ language, setLanguage, setCurrentPage, setIsAdmin }) {
         axios.get(`${API}/admin/results`),
         axios.get(`${API}/admin/employees`)
       ]);
-      setResults(resultsRes.data.results);
+      const normalizedResults = (resultsRes.data.results || []).map((result) => ({
+        ...result,
+        sections: normalizeSections(result.sections_normalized || result.sections)
+      }));
+      setResults(normalizedResults);
       setEmployees(employeesRes.data.employees);
       setLoading(false);
     } catch (err) {
@@ -770,10 +806,12 @@ function AdminDashboard({ language, setLanguage, setCurrentPage, setIsAdmin }) {
   const analytics = {
     totalEmployees: employees.length,
     totalTests: results.length,
-    avgScore: results.length > 0 ? (results.reduce((sum, r) => sum + r.percentage, 0) / results.length).toFixed(1) : 0,
-    highPerformers: results.filter(r => r.percentage >= 80).length,
-    mediumPerformers: results.filter(r => r.percentage >= 50 && r.percentage < 80).length,
-    lowPerformers: results.filter(r => r.percentage < 50).length,
+    avgScore: results.length > 0 ? (results.reduce((sum, r) => sum + (Number(r.percentage) || 0), 0) / results.length).toFixed(1) : 0,
+    highPerformers: results.filter(r => (Number(r.percentage) || 0) >= 80).length,
+    mediumPerformers: results.filter(r => (Number(r.percentage) || 0) >= 50 && (Number(r.percentage) || 0) < 80).length,
+    lowPerformers: results.filter(r => (Number(r.percentage) || 0) < 50).length,
+    passRate: results.length > 0 ? ((results.filter(r => (Number(r.percentage) || 0) >= 50).length / results.length) * 100).toFixed(1) : 0,
+    topScore: results.length > 0 ? Math.max(...results.map(r => Number(r.percentage) || 0)).toFixed(1) : 0,
     sectionStats: {}
   };
 
@@ -796,6 +834,17 @@ function AdminDashboard({ language, setLanguage, setCurrentPage, setIsAdmin }) {
     if (percentage >= 40) return { level: language === 'te' ? 'సగటు' : 'Average', color: '#f59e0b' };
     return { level: language === 'te' ? 'మెరుగుపరచాలి' : 'Needs Improvement', color: '#ef4444' };
   };
+
+  const filteredResults = [...results]
+    .filter((result) => (result.employee_name || '').toLowerCase().includes(searchTerm.toLowerCase()));
+
+  if (sortBy === 'score-high') {
+    filteredResults.sort((a, b) => (Number(b.percentage) || 0) - (Number(a.percentage) || 0));
+  } else if (sortBy === 'score-low') {
+    filteredResults.sort((a, b) => (Number(a.percentage) || 0) - (Number(b.percentage) || 0));
+  } else {
+    filteredResults.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  }
 
   if (loading) {
     return (
@@ -872,6 +921,20 @@ function AdminDashboard({ language, setLanguage, setCurrentPage, setIsAdmin }) {
                   <span className="stat-label">{language === 'te' ? 'సగటు స్కోర్' : 'Average Score'}</span>
                 </div>
               </div>
+               <div className="stat-card">
+                <Check size={32} />
+                <div>
+                  <span className="stat-value">{analytics.passRate}%</span>
+                  <span className="stat-label">{language === 'te' ? 'పాస్ రేట్' : 'Pass Rate'}</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <Award size={32} />
+                <div>
+                  <span className="stat-value">{analytics.topScore}%</span>
+                  <span className="stat-label">{language === 'te' ? 'గరిష్ట స్కోర్' : 'Top Score'}</span>
+                </div>
+              </div>
             </div>
 
             {/* Performance Distribution */}
@@ -905,7 +968,21 @@ function AdminDashboard({ language, setLanguage, setCurrentPage, setIsAdmin }) {
             {/* Recent Results */}
             <div className="results-section">
               <h3>{language === 'te' ? 'ఇటీవలి పరీక్ష ఫలితాలు' : 'Recent Test Results'}</h3>
-              {results.length === 0 ? (
+              <div className="dashboard-controls">
+                <input
+                  type="text"
+                  className="dashboard-search"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder={language === 'te' ? 'ఉద్యోగి పేరు ద్వారా వెతకండి' : 'Search by employee name'}
+                />
+                <select className="dashboard-sort" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                  <option value="recent">{language === 'te' ? 'ఇటీవలి' : 'Most Recent'}</option>
+                  <option value="score-high">{language === 'te' ? 'ఎక్కువ స్కోర్' : 'Highest Score'}</option>
+                  <option value="score-low">{language === 'te' ? 'తక్కువ స్కోర్' : 'Lowest Score'}</option>
+                </select>
+              </div>
+              {filteredResults.length === 0 ? (
                 <p className="no-data">{language === 'te' ? 'ఇంకా ఫలితాలు లేవు' : 'No results yet'}</p>
               ) : (
                 <table className="results-table-full">
@@ -919,7 +996,7 @@ function AdminDashboard({ language, setLanguage, setCurrentPage, setIsAdmin }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {results.slice(0, 10).map(result => {
+                    {filteredResults.slice(0, 50).map(result => {
                       const skillLevel = getSkillLevel(result.percentage);
                       return (
                         <tr key={result.id}>
@@ -984,7 +1061,7 @@ function AdminDashboard({ language, setLanguage, setCurrentPage, setIsAdmin }) {
             <div className="section-analytics">
               <h4>{language === 'te' ? 'విభాగాల వారీగా సగటు పనితీరు' : 'Section-wise Average Performance'}</h4>
               <div className="section-bars">
-                {Object.entries(analytics.sectionStats).map(([sectionId, data]) => {
+                {Object.entries(normalizeSections(selectedEmployee.sections_normalized || selectedEmployee.sections)).map(([sectionId, data]) => {
                   const avgPercentage = data.count > 0 ? (data.totalScore / data.count).toFixed(1) : 0;
                   const skillLevel = getSkillLevel(parseFloat(avgPercentage));
                   return (
